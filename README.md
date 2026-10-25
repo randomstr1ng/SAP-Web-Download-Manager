@@ -25,9 +25,13 @@ server: operate it from any browser, files land on the server.
 ## Quickstart
 
 ```bash
-mkdir -p data downloads     # host dirs must be owned by uid 1000
-docker compose up --build   # open http://localhost:8000/ui/
+mkdir -p data downloads        # host dirs must be owned by uid 1000
+docker compose up -d           # open http://localhost:8000/ui/
 ```
+
+`docker compose up` uses the published image
+(`ghcr.io/randomstr1ng/sap-web-download-manager:latest`); to run from source
+instead use `docker compose up --build`.
 
 Or use the published image directly:
 

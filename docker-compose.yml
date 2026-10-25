@@ -1,7 +1,10 @@
 services:
   sapdlm:
+    # Published image (updated by the release workflow on every v* tag).
+    # `docker compose up` uses this; `docker compose build` (or `up --build`)
+    # builds from the local source instead.
+    image: ghcr.io/randomstr1ng/sap-web-download-manager:latest
     build: .
-    image: sapdlm:latest
     ports:
       - "8000:8000"
     volumes:
@@ -11,7 +14,6 @@ services:
       #   mkdir -p data downloads
       # If the directories already exist as root, fix with:
       #   sudo chown -R 1000:1000 data downloads
-      # (or map to your own uid: uncomment the 'user:' line below)
       - ./downloads:/data/downloads
       - ./data:/data/app
     environment:
@@ -22,4 +24,3 @@ services:
       # - DLM_MCP_TOKEN
       # - DLM_SAP_PASSWORD (overrides the credential store for one run)
     restart: unless-stopped
-    # user: "1000:1000"   # optional: run as a different host uid
