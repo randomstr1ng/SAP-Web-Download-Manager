@@ -29,6 +29,14 @@ mkdir -p data downloads     # host dirs must be owned by uid 1000
 docker compose up --build   # open http://localhost:8000/ui/
 ```
 
+Or use the published image directly:
+
+```bash
+docker run -d -p 8000:8000 \
+  -v "$PWD/data:/data/app" -v "$PWD/downloads:/data/downloads" \
+  ghcr.io/randomstr1ng/sap-web-download-manager:latest
+```
+
 The first start opens a wizard asking for your S-User and password (URL and
 download directory are prefilled). Fill your basket in the
 [Software Download Center](https://support.sap.com/swdc), press *Refresh*,
@@ -70,3 +78,11 @@ dependencies are MIT/BSD/Apache-2.0 (see `pyproject.toml`).
   reads and downloads it (adding items is not part of the original client's
   protocol).
 - The vendored OpenUI5 runtime is ~133 MB — clones are correspondingly sized.
+
+## Releases
+
+Pushing a `v*` git tag (e.g. `v0.1.0`) triggers the release workflow: it runs
+the test suite and publishes the container image to
+[ghcr.io/randomstr1ng/sap-web-download-manager](https://github.com/randomstr1ng/SAP-Web-Download-Manager/pkgs/container/sap-web-download-manager)
+with the tags `0.1.0`, `0.1` and `latest`. CI runs on every push and validates
+the Docker build.
