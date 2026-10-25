@@ -1,0 +1,121 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theme",
+			"size": 651,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": ".theming",
+			"size": 95,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "DatePicker.less",
+			"size": 252,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "base.less",
+			"size": 178978,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Bold-full.woff2",
+			"size": 58556,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Bold.woff2",
+			"size": 23684,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Light-full.woff2",
+			"size": 60048,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Light.woff2",
+			"size": 24296,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Regular-full.woff2",
+			"size": 57984,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72-Regular.woff2",
+			"size": 23756,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72Mono-Bold-full.woff2",
+			"size": 53272,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72Mono-Bold.woff2",
+			"size": 21408,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72Mono-Regular-full.woff2",
+			"size": 52156,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "fonts/72Mono-Regular.woff2",
+			"size": 21112,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "global.less",
+			"size": 118496,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 299919,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/core/themes/sap_fiori_3_dark/library-parameters.json",
+			"size": 154361,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.css",
+			"size": 299907,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.less",
+			"size": 9661,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.source.less",
+			"size": 279,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "resources.json",
+			"size": 2223
+		},
+		{
+			"name": "shared.less",
+			"size": 8876,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		}
+	]
+}

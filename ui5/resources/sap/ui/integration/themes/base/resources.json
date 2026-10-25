@@ -1,0 +1,156 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 116,
+			"theme": "base"
+		},
+		{
+			"name": "ActionsStrip.less",
+			"size": 551,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "AdaptiveCard.less",
+			"size": 668,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "AnalyticsCloudContent.less",
+			"size": 584,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "BlockingMessage.less",
+			"size": 367,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CalendarContent.less",
+			"size": 5085,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Card.less",
+			"size": 5672,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CardVariants.less",
+			"size": 5971,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CustomElementBase.less",
+			"size": 314,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CustomElementCard.less",
+			"size": 244,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Footer.less",
+			"size": 836,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "HeaderInfoSection.less",
+			"size": 835,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ImageWithOverlay.less",
+			"size": 1516,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ListContentItem.less",
+			"size": 3813,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Microchart.less",
+			"size": 1100,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "MicrochartLegend.less",
+			"size": 1037,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ObjectContent.less",
+			"size": 3992,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ObjectStatus.less",
+			"size": 433,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Paginator.less",
+			"size": 352,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "WebPageContent.less",
+			"size": 606,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 40897,
+			"theme": "base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/integration/themes/base/library-parameters.json",
+			"size": 144,
+			"theme": "base"
+		},
+		{
+			"name": "library.css",
+			"size": 40892,
+			"theme": "base"
+		},
+		{
+			"name": "library.less",
+			"size": 35704,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 846,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2576
+		}
+	]
+}

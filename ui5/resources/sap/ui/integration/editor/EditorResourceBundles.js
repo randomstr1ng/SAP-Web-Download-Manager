@@ -1,0 +1,7 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2026 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/base/ManagedObject","sap/base/i18n/ResourceBundle","sap/base/Log"],function(e,r,a){"use strict";var u=e.extend("sap.ui.integration.editor.EditorResourceBundles",{metadata:{library:"sap.ui.integration",properties:{url:{type:"string",defaultValue:""},languages:{type:"object"}},events:{ready:{}}}});u.prototype.loadResourceBundles=function(){var e=this;var u=e.getUrl();var s=e.getLanguages();e._ready=false;e._aResourceBundles=[];e._aResourceBundleReadyPromise=[];Object.keys(s).forEach(function(a){if(u){e._aResourceBundles[a]="";var n=r.create({url:u,async:true,locale:a}).then(function(r){var u={language:s[a],resourceBundle:r};e._aResourceBundles[a]=u});e._aResourceBundleReadyPromise.push(n)}else{var o={language:s[a]};e._aResourceBundles[a]=o}});if(e._aResourceBundleReadyPromise.length>0){Promise.all(e._aResourceBundleReadyPromise).then(function(){Object.keys(s).forEach(function(r){if(e._aResourceBundles[r]==""){var a={language:s[r]};e._aResourceBundles[r]=a}});a.info("sap.ui.integration.editor.EditorResourceBundles: resource bundles loaded.");e._ready=true;e.fireReady()})}else{a.info("sap.ui.integration.editor.EditorResourceBundles: no resource bundles.");e._ready=true;e.fireReady()}};u.prototype.isReady=function(){return this._ready};u.prototype.getResourceBundles=function(){return this._aResourceBundles};return u});
+//# sourceMappingURL=EditorResourceBundles.js.map

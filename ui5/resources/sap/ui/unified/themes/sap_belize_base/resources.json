@@ -1,0 +1,126 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 161,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Calendar.less",
+			"size": 25464,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CalendarDateInterval.less",
+			"size": 701,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CalendarLegend.less",
+			"size": 8028,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CalendarRow.less",
+			"size": 18960,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ColorPicker.less",
+			"size": 21275,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ContentSwitcher.less",
+			"size": 4781,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Currency.less",
+			"size": 1024,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "FileUploader.less",
+			"size": 5530,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "IndexPicker.less",
+			"size": 828,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Menu.less",
+			"size": 9941,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ShellHeader.less",
+			"size": 14174,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ShellLayout.less",
+			"size": 4074,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ShellOverlay.less",
+			"size": 9357,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "SplitContainer.less",
+			"size": 2047,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 112270,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/unified/themes/sap_belize_base/library-parameters.json",
+			"size": 7529,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.css",
+			"size": 112171,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.less",
+			"size": 127529,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 669,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2289
+		}
+	]
+}

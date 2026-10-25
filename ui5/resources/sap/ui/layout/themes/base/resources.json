@@ -1,0 +1,167 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 116,
+			"theme": "base"
+		},
+		{
+			"name": "AlignedFlowLayout.less",
+			"size": 1371,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "BlockLayout.less",
+			"size": 5863,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "BlockLayoutCell.less",
+			"size": 1375,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "BlockLayoutRow.less",
+			"size": 905,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CSSGrid.less",
+			"size": 2082,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ColumnLayout.less",
+			"size": 10917,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "DynamicSideContent.less",
+			"size": 1635,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "FixFlex.less",
+			"size": 2024,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Form.less",
+			"size": 629,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "FormLayout.less",
+			"size": 3025,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Grid.less",
+			"size": 8588,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "GridLayout.less",
+			"size": 6031,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "HorizontalLayout.less",
+			"size": 2035,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ResponsiveFlowLayout.less",
+			"size": 1349,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ResponsiveGridLayout.less",
+			"size": 16329,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ResponsiveLayout.less",
+			"size": 8601,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ResponsiveSplitter.less",
+			"size": 3849,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "SimpleForm.less",
+			"size": 488,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Splitter.less",
+			"size": 8108,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "VerticalLayout.less",
+			"size": 1679,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "img/create.txt",
+			"size": 0,
+			"theme": "base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 157892,
+			"theme": "base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/layout/themes/base/library-parameters.json",
+			"size": 3432,
+			"theme": "base"
+		},
+		{
+			"name": "library.css",
+			"size": 157423,
+			"theme": "base"
+		},
+		{
+			"name": "library.less",
+			"size": 88647,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 861,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2741
+		}
+	]
+}

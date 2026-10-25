@@ -1,0 +1,101 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 94,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "Calendar.less",
+			"size": 25119,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "CalendarLegend.less",
+			"size": 1039,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "CalendarRow.less",
+			"size": 4838,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "ColorPicker.less",
+			"size": 4505,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "FileUploader.less",
+			"size": 3051,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "Menu.less",
+			"size": 2950,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "ShellHeader.less",
+			"size": 4560,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "ShellLayout.less",
+			"size": 469,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "ShellOverlay.less",
+			"size": 1506,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "img/PickingCursor-HCW.png",
+			"size": 499,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 206562,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/unified/themes/sap_horizon_hcw/library-parameters.json",
+			"size": 8671,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.css",
+			"size": 206429,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.less",
+			"size": 49106,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.source.less",
+			"size": 577,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "resources.json",
+			"size": 1817
+		}
+	]
+}

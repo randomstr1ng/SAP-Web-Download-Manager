@@ -1,0 +1,7 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2026 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/integration/editor/fields/BaseField","sap/ui/core/ListItem","sap/m/ComboBox","sap/ui/model/Sorter","sap/ui/model/Filter"],function(e,t,i,a,n){"use strict";var r=e.extend("sap.ui.integration.editor.fields.DestinationField",{metadata:{library:"sap.ui.integration"},renderer:e.getMetadata().getRenderer()});r.prototype.initVisualization=function(e){var r=this;var s=e.visualization;if(!s){s={type:i,settings:{busy:{path:"destinations>_loading",formatter:function(t){if(!t&&e.filter){var i;if(Array.isArray(e.filter.filters)){var a=[];e.filter.filters.forEach(function(e){a.push(new n(e))});var s=typeof e.filter.and==="boolean"?e.filter.and:false;i=new n({filters:a,and:s})}else{i=new n(e.filter)}var o=r.getAggregation("_field").getBinding("items");if(!o){r.attachEventOnce("afterInit",function(){o=r.getAggregation("_field").getBinding("items");o.filter([i])})}else{o.filter([i])}}return t}},selectedKey:{path:"currentSettings>value"},width:"100%",editable:{path:"currentSettings>editable"},items:{path:"destinations>_values",template:new t({text:"{destinations>name}",key:"{destinations>name}"})}}};s.settings.items.sorter=[];var o=e.sorter||[{path:"name"}];o.forEach(function(e){s.settings.items.sorter.push(new a(e))})}this._visualization=s};return r});
+//# sourceMappingURL=DestinationField.js.map

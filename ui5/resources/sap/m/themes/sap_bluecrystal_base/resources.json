@@ -1,0 +1,1104 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 166,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "AbstractContainer.less",
+			"size": 687,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ActionListItem.less",
+			"size": 1511,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ActionSelect.less",
+			"size": 763,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ActionSheet.less",
+			"size": 2869,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ActionTile.less",
+			"size": 6601,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ActionTileContent.less",
+			"size": 1840,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "AdditionalTextButton.less",
+			"size": 1091,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "App.less",
+			"size": 174,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Avatar.less",
+			"size": 7557,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Bar.less",
+			"size": 4364,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "BarBase.less",
+			"size": 1608,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Breadcrumbs.less",
+			"size": 3180,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "BusyDialog.less",
+			"size": 1156,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "BusyIndicator.less",
+			"size": 1296,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Button.less",
+			"size": 21251,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Carousel.less",
+			"size": 13420,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "CellSelector.less",
+			"size": 1631,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "CheckBox.less",
+			"size": 5452,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ColorPalette.less",
+			"size": 9160,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ColumnListItem.less",
+			"size": 4941,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ColumnMenu.less",
+			"size": 672,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ColumnResizer.less",
+			"size": 977,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ComboBox.less",
+			"size": 456,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ComboBoxBase.less",
+			"size": 1441,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ComboBoxTextField.less",
+			"size": 187,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ContextMenuSetting.less",
+			"size": 80,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "CustomListItem.less",
+			"size": 364,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "CustomTile.less",
+			"size": 683,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DatePicker.less",
+			"size": 739,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DateRangeSelection.less",
+			"size": 191,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DateTimePicker.less",
+			"size": 6289,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Dialog.less",
+			"size": 10888,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DisplayListItem.less",
+			"size": 1342,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DraftIndicator.less",
+			"size": 341,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "DynamicDateRange.less",
+			"size": 1275,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ExpandableText.less",
+			"size": 1880,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FacetFilter.less",
+			"size": 3407,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FacetFilterItem.less",
+			"size": 852,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FacetFilterList.less",
+			"size": 1354,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FeedContent.less",
+			"size": 1948,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FeedInput.less",
+			"size": 4749,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FeedListItem.less",
+			"size": 9334,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FlexBox.less",
+			"size": 2751,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "FormattedText.less",
+			"size": 927,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "GenericTag.less",
+			"size": 3934,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "GenericTile.less",
+			"size": 47710,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "GroupHeaderListItem.less",
+			"size": 1852,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "HeaderContainer.less",
+			"size": 5905,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "IconTabBar.less",
+			"size": 38792,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "IconTabBarSelectList.less",
+			"size": 3968,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "IllustratedMessage.less",
+			"size": 2893,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Illustration.less",
+			"size": 1728,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Image.less",
+			"size": 1231,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ImageContent.less",
+			"size": 865,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Input.less",
+			"size": 3062,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "InputBase.less",
+			"size": 16716,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "InputListItem.less",
+			"size": 1028,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Label.less",
+			"size": 10405,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "LightBox.less",
+			"size": 6397,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Link.less",
+			"size": 2834,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "LinkTileContent.less",
+			"size": 324,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ListBase.less",
+			"size": 7010,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ListItemBase.less",
+			"size": 6931,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Menu.less",
+			"size": 364,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MenuButton.less",
+			"size": 5458,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MenuListItem.less",
+			"size": 1796,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessageBox.less",
+			"size": 1909,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessagePage.less",
+			"size": 2013,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessagePopover.less",
+			"size": 1190,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessageStrip.less",
+			"size": 2136,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessageToast.less",
+			"size": 836,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MessageView.less",
+			"size": 4628,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MultiComboBox.less",
+			"size": 4218,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "MultiInput.less",
+			"size": 4405,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NavContainer.less",
+			"size": 7283,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NewsContent.less",
+			"size": 2346,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NotificationListBase.less",
+			"size": 875,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NotificationListGroup.less",
+			"size": 2276,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NotificationListItem.less",
+			"size": 2779,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "NumericContent.less",
+			"size": 5580,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectAttribute.less",
+			"size": 4536,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectHeader.less",
+			"size": 23534,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectIdentifier.less",
+			"size": 1979,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectListItem.less",
+			"size": 5084,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectMarker.less",
+			"size": 1064,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectNumber.less",
+			"size": 6758,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ObjectStatus.less",
+			"size": 32099,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "OverflowToolbarAssociativePopover.less",
+			"size": 2021,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "P13nColumnsPanel.less",
+			"size": 1936,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "P13nConditionPanel.less",
+			"size": 1141,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "P13nDialog.less",
+			"size": 627,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "P13nFilterPanel.less",
+			"size": 862,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "P13nSortPanel.less",
+			"size": 346,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PDFViewer.less",
+			"size": 576,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Page.less",
+			"size": 8903,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PagingButton.less",
+			"size": 214,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Panel.less",
+			"size": 3459,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PasteProvider.less",
+			"size": 578,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PlanningCalendar.less",
+			"size": 10632,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PlanningCalendarHeader.less",
+			"size": 1013,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PlanningCalendarLegend.less",
+			"size": 535,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Popover.less",
+			"size": 8548,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ProgressIndicator.less",
+			"size": 5128,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "PullToRefresh.less",
+			"size": 3217,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "QuickView.less",
+			"size": 6486,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "RadioButton.less",
+			"size": 4763,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "RadioButtonGroup.less",
+			"size": 2400,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "RangeSlider.less",
+			"size": 1437,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "RatingIndicator.less",
+			"size": 3954,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ScrollBar.less",
+			"size": 872,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ScrollContainer.less",
+			"size": 813,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SearchField.less",
+			"size": 5523,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SegmentedButton.less",
+			"size": 4970,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Select.less",
+			"size": 13497,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SelectDialog.less",
+			"size": 624,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SelectList.less",
+			"size": 3235,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SelectionDetails.less",
+			"size": 260,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SelectionDetailsItem.less",
+			"size": 2133,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SemanticPage.less",
+			"size": 219,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Shell.less",
+			"size": 5460,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SimpleFixFlex.less",
+			"size": 413,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SinglePlanningCalendar.less",
+			"size": 1388,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SinglePlanningCalendarGrid.less",
+			"size": 20843,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SinglePlanningCalendarMonthGrid.less",
+			"size": 6033,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SlideTile.less",
+			"size": 4945,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Slider.less",
+			"size": 3694,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SliderTooltip.less",
+			"size": 1108,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SliderTooltipContainer.less",
+			"size": 361,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SplitButton.less",
+			"size": 1960,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SplitContainer.less",
+			"size": 5732,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "StandardListItem.less",
+			"size": 6839,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "StandardTile.less",
+			"size": 3858,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "StandardTreeItem.less",
+			"size": 430,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "StepInput.less",
+			"size": 790,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SuggestionItem.less",
+			"size": 323,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "SuggestionsPopover.less",
+			"size": 3686,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Support.less",
+			"size": 1391,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Switch.less",
+			"size": 7409,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TabContainer.less",
+			"size": 1086,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TabStrip.less",
+			"size": 10166,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Table.less",
+			"size": 12095,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TablePersoDialog.less",
+			"size": 3080,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TableSelectDialog.less",
+			"size": 474,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Text.less",
+			"size": 3165,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TextArea.less",
+			"size": 5453,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Tile.less",
+			"size": 1656,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TileContainer.less",
+			"size": 6003,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TileContent.less",
+			"size": 4819,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TimePicker.less",
+			"size": 1265,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TimePickerClock.less",
+			"size": 5572,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TimePickerClocks.less",
+			"size": 1156,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TimePickerInputs.less",
+			"size": 522,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TimePickerSliders.less",
+			"size": 9067,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Title.less",
+			"size": 1803,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ToggleButton.less",
+			"size": 3803,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Token.less",
+			"size": 3262,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Tokenizer.less",
+			"size": 2637,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Toolbar.less",
+			"size": 3374,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ToolbarSeparator.less",
+			"size": 531,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ToolbarSpacer.less",
+			"size": 452,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "TreeItemBase.less",
+			"size": 1370,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "UploadCollection.less",
+			"size": 12697,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "UploadSet.less",
+			"size": 2377,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "UploadSetwithTable.less",
+			"size": 1721,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ValueStateHeader.less",
+			"size": 1307,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ValueStateMessage.less",
+			"size": 791,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "VariantManagement.less",
+			"size": 2721,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "ViewSettingsDialog.less",
+			"size": 2787,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "WheelSlider.less",
+			"size": 7006,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "WheelSliderContainer.less",
+			"size": 1265,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "Wizard.less",
+			"size": 2417,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "WizardProgressNavigator.less",
+			"size": 8012,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "WizardStep.less",
+			"size": 457,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 677438,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/m/themes/sap_bluecrystal_base/library-parameters.json",
+			"size": 21394,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "library.css",
+			"size": 677435,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "library.less",
+			"size": 756776,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 5753,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "p13n.Container.less",
+			"size": 272,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "p13n.QueryPanel.less",
+			"size": 197,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "p13n.SelectionPanel.less",
+			"size": 923,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		},
+		{
+			"name": "resources.json",
+			"size": 21370
+		},
+		{
+			"name": "shared.less",
+			"size": 6781,
+			"designtime": true,
+			"theme": "sap_bluecrystal_base"
+		}
+	]
+}

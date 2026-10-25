@@ -1,0 +1,90 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 95,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "BlockLayout.less",
+			"size": 13276,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "ColumnLayout.less",
+			"size": 828,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "FormLayout.less",
+			"size": 1994,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "GridLayout.less",
+			"size": 1415,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "ResponsiveGridLayout.less",
+			"size": 1173,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "ResponsiveLayout.less",
+			"size": 1265,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "ResponsiveSplitter.less",
+			"size": 775,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "Splitter.less",
+			"size": 354,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 200428,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/layout/themes/sap_horizon_dark/library-parameters.json",
+			"size": 8296,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "library.css",
+			"size": 199961,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "library.less",
+			"size": 22134,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "library.source.less",
+			"size": 573,
+			"designtime": true,
+			"theme": "sap_horizon_dark"
+		},
+		{
+			"name": "resources.json",
+			"size": 1646
+		}
+	]
+}

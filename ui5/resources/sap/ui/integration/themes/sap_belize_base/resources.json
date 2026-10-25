@@ -1,0 +1,156 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 161,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ActionsStrip.less",
+			"size": 536,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "AdaptiveCard.less",
+			"size": 278,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "AnalyticsCloudContent.less",
+			"size": 570,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "BlockingMessage.less",
+			"size": 367,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CalendarContent.less",
+			"size": 5026,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Card.less",
+			"size": 1670,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CardTileVariant.less",
+			"size": 3293,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CustomElementBase.less",
+			"size": 314,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CustomElementCard.less",
+			"size": 244,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Footer.less",
+			"size": 324,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ImageWithOverlay.less",
+			"size": 1512,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "LinkWithIcon.less",
+			"size": 366,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ListContentItem.less",
+			"size": 3690,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Microchart.less",
+			"size": 1079,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "MicrochartLegend.less",
+			"size": 1028,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ObjectContent.less",
+			"size": 3550,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ObjectStatus.less",
+			"size": 428,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Paginator.less",
+			"size": 3292,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "WebPageContent.less",
+			"size": 411,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 32003,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/integration/themes/sap_belize_base/library-parameters.json",
+			"size": 630,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.css",
+			"size": 31997,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.less",
+			"size": 29702,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 844,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2861
+		}
+	]
+}

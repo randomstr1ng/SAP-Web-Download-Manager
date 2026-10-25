@@ -1,0 +1,80 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+		 controllerName="dlm.controller.Basket">
+<Page id="basketPage"
+	  title="{i18n>appTitle}"
+	  showNavButton="false"
+	  floatingFooter="true">
+	<customHeader>
+		<OverflowToolbar>
+			<Title text="{i18n>appTitle}"/>
+			<ToolbarSpacer/>
+			<SearchField id="search" placeholder="{i18n>searchPlaceholder}" liveChange=".onSearch" width="220px"/>
+			<Button id="btnRefresh" text="{i18n>refresh}" tooltip="{i18n>ttRefresh}" icon="sap-icon://refresh" press=".onRefresh"/>
+			<Button id="btnDownloadSelected" text="{i18n>downloadSelected}" tooltip="{i18n>ttDownloadSelected}" icon="sap-icon://download" press=".onDownloadSelected"/>
+			<Button id="btnDownloadAll" text="{i18n>downloadAll}" tooltip="{i18n>ttDownloadAll}" icon="sap-icon://download-from-cloud" press=".onDownloadAll"/>
+			<Button id="btnPause" text="{i18n>pause}" tooltip="{i18n>ttPause}" icon="sap-icon://pause" press=".onPause"/>
+			<Button id="btnSchedule" text="{i18n>schedule}" tooltip="{i18n>ttSchedule}" icon="sap-icon://clock" press=".onSchedule"/>
+			<Button id="btnHistory" text="{i18n>history}" tooltip="{i18n>ttHistory}" icon="sap-icon://history" press=".onHistory"/>
+			<Button id="btnSettings" text="{i18n>settings}" tooltip="{i18n>ttSettings}" icon="sap-icon://action-settings" press=".onSettings"/>
+			<Button id="btnTheme" text="{i18n>theme}" tooltip="{i18n>ttTheme}" icon="sap-icon://brightness" press=".onToggleTheme"/>
+		</OverflowToolbar>
+	</customHeader>
+	<subHeader>
+		<OverflowToolbar>
+			<Button text="{i18n>selectAll}" tooltip="{i18n>ttSelectAll}" icon="sap-icon://select-all" press=".onSelectAll"/>
+			<Button text="{i18n>deselectAll}" tooltip="{i18n>ttDeselectAll}" icon="sap-icon://clear-all" press=".onDeselectAll"/>
+			<ToolbarSpacer/>
+			<Button text="{i18n>protocol}" tooltip="{i18n>ttProtocol}" icon="sap-icon://display" press=".onProtocol"/>
+			<Button text="{i18n>deleteLocal}" tooltip="{i18n>ttDeleteLocal}" icon="sap-icon://delete" press=".onDeleteLocal"/>
+			<Button text="{i18n>removeFromBasket}" tooltip="{i18n>ttRemoveFromBasket}" icon="sap-icon://remove" press=".onRemoveFromBasket"/>
+		</OverflowToolbar>
+	</subHeader>
+	<content>
+		<MessageStrip id="upgradeBanner" type="Warning" showIcon="true"
+			text="{i18n>upgradeAvailable}" visible="false"
+			linkText="{i18n>upgradeInfo}" linkPressed=".onUpgradeLink"/>
+		<Text id="notRefreshedText" text="{i18n>notRefreshed}" visible="true"/>
+		<Table id="basketTable" mode="MultiSelect" growing="false"
+			   items="{/basket/items}"
+			   updateFinished=".onTableUpdate">
+			<columns>
+				<Column id="colObject" width="35%">
+					<Text text="{i18n>object}"/>
+				</Column>
+				<Column id="colSize" minScreenWidth="Tablet" hAlign="End" demandPopin="true">
+					<Text text="{i18n>size}"/>
+				</Column>
+				<Column id="colDate" minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>date}"/>
+				</Column>
+				<Column id="colStatus" minScreenWidth="Tablet" demandPopin="true">
+					<Text text="{i18n>status}"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Active" vAlign="Middle">
+					<cells>
+						<Text text="{text}"/>
+						<Text text="{size_text}"/>
+						<Text text="{date_text}"/>
+						<VBox>
+							<ObjectStatus text="{status_text}" state="{status_state}"/>
+							<ProgressIndicator visible="{downloading}" state="Information"
+								percentValue="{progress_percent}" showValue="true"
+								displayValue="{progress_text}" height="10px"/>
+						</VBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</content>
+	<footer>
+		<OverflowToolbar>
+			<core:Icon src="{/footer/icon}"/>
+			<Text text="{/footer/connectionText}"/>
+			<ToolbarSpacer/>
+			<Text text="{/footer/downloadingText}"/>
+		</OverflowToolbar>
+	</footer>
+</Page>
+</mvc:View>

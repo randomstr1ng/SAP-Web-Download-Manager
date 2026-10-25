@@ -1,0 +1,25 @@
+services:
+  sapdlm:
+    build: .
+    image: sapdlm:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      # IMPORTANT: create these directories BEFORE the first start and make
+      # them owned by uid 1000 (the container's non-root user). Otherwise
+      # Docker creates them as root and the app cannot write its database:
+      #   mkdir -p data downloads
+      # If the directories already exist as root, fix with:
+      #   sudo chown -R 1000:1000 data downloads
+      # (or map to your own uid: uncomment the 'user:' line below)
+      - ./downloads:/data/downloads
+      - ./data:/data/app
+    environment:
+      # Web UI is internal-only and served over plain HTTP (project decision).
+      - DLM_BIND=0.0.0.0:8000
+      # Bootstrap secrets - set in .env (never committed):
+      # - DLM_ADMIN_PASSWORD (with DLM_ADMIN_USER=admin)
+      # - DLM_MCP_TOKEN
+      # - DLM_SAP_PASSWORD (overrides the credential store for one run)
+    restart: unless-stopped
+    # user: "1000:1000"   # optional: run as a different host uid

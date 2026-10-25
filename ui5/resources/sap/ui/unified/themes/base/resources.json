@@ -1,0 +1,172 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 116,
+			"theme": "base"
+		},
+		{
+			"name": "Calendar.less",
+			"size": 28705,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CalendarDateInterval.less",
+			"size": 922,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CalendarLegend.less",
+			"size": 8022,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CalendarRow.less",
+			"size": 19194,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "CalendarTimeInterval.less",
+			"size": 2842,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ColorPicker.less",
+			"size": 19780,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ContentSwitcher.less",
+			"size": 4781,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Currency.less",
+			"size": 992,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "FileUploader.less",
+			"size": 12218,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "IndexPicker.less",
+			"size": 1063,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "Menu.less",
+			"size": 10288,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ShellHeader.less",
+			"size": 13611,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ShellLayout.less",
+			"size": 3705,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "ShellOverlay.less",
+			"size": 7980,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "SplitContainer.less",
+			"size": 1726,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "img-RTL/create.txt",
+			"size": 0,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/Alphaslider_BG.png",
+			"size": 2936,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/ColorBar.png",
+			"size": 559,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/GradientBox.png",
+			"size": 56106,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/PickingCursor-Default.png",
+			"size": 483,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/Swatch_BG.png",
+			"size": 954,
+			"theme": "base"
+		},
+		{
+			"name": "img/ColorPicker/Unified_Swatch_BG.png",
+			"size": 1064,
+			"theme": "base"
+		},
+		{
+			"name": "img/create.txt",
+			"size": 0,
+			"theme": "base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 130081,
+			"theme": "base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/unified/themes/base/library-parameters.json",
+			"size": 8151,
+			"theme": "base"
+		},
+		{
+			"name": "library.css",
+			"size": 129992,
+			"theme": "base"
+		},
+		{
+			"name": "library.less",
+			"size": 137254,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 706,
+			"designtime": true,
+			"theme": "base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2872
+		}
+	]
+}

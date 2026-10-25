@@ -1,0 +1,7 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2026 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/core/ControlBehavior","sap/ui/core/Core","./library"],function(e,a,r){"use strict";var i=r.TaskCircleColor;var t={apiVersion:2};t.render=function(a,r){var t=r.getMinValue();var s=r.getMaxValue();var l=r.getValue();if(t<0){t=0}if(s<0){s=1}if(l<0){l=0}var o=l.toString();var c=r.getColor();var n="sapUiTaskCircleColorGray";switch(c){case i.Red:n="sapUiTaskCircleColorRed";break;case i.Yellow:n="sapUiTaskCircleColorYellow";break;case i.Green:n="sapUiTaskCircleColorGreen";break;case i.Gray:n="sapUiTaskCircleColorGray";break;default:break}if(l<t){t=l}if(l>s){s=l}var p=24;if(t>10){p=32}if(t>100){p=46}var v=62;var u=parseInt(Math.sqrt((l-t)/(s-t)*(v*v-p*p)+p*p));var C=(l+"").length;var b=u*.55;if(C>1){b=u/C}a.openStart("div",r);a.attr("tabindex","0");if(r.getTooltip_AsString()){a.attr("title",r.getTooltip_AsString())}else{a.attr("title",o)}if(e.isAccessibilityEnabled()){a.attr("role","progressbar");a.accessibilityState(r,{valuemin:t});a.accessibilityState(r,{valuemax:s});a.accessibilityState(r,{valuenow:l})}a.attr("class","sapUiTaskCircle "+n);a.style("width",u+"px");a.style("height",u+"px");a.style("line-height",u+"px");a.style("font-size",parseInt(b)+"px");a.style("border-radius",u+"px");a.style("-moz-border-radius",u+"px");a.openEnd();a.text(l);a.close("div")};return t},true);
+//# sourceMappingURL=TaskCircleRenderer.js.map

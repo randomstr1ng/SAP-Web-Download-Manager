@@ -1,0 +1,16 @@
+<Dialog xmlns="sap.m" title="{i18n>scheduleTitle}" contentWidth="500px">
+	<content>
+		<VBox class="sapUiMediumMargin">
+			<Label text="{i18n>scheduleAt}" labelFor="schedulePicker"/>
+			<DateTimePicker id="schedulePicker" dateValue="{dlg>/schedule_at}"
+				minutesStep="15" displayFormat="yyyy-MM-dd HH:mm"/>
+			<Text text="{i18n>scheduleInfo}" class="sapUiSmallMarginTop"/>
+		</VBox>
+	</content>
+	<beginButton>
+		<Button text="{i18n>ok}" type="Emphasized" press=".onScheduleSave"/>
+	</beginButton>
+	<endButton>
+		<Button text="{i18n>cancel}" press=".onScheduleCancel"/>
+	</endButton>
+</Dialog>

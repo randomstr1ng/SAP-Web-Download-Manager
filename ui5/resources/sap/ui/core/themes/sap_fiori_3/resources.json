@@ -1,0 +1,121 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theme",
+			"size": 631,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": ".theming",
+			"size": 90,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "DatePicker.less",
+			"size": 252,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "base.less",
+			"size": 181622,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Bold-full.woff2",
+			"size": 58556,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Bold.woff2",
+			"size": 23684,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Light-full.woff2",
+			"size": 60048,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Light.woff2",
+			"size": 24296,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Regular-full.woff2",
+			"size": 57984,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72-Regular.woff2",
+			"size": 23756,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72Mono-Bold-full.woff2",
+			"size": 53272,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72Mono-Bold.woff2",
+			"size": 21408,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72Mono-Regular-full.woff2",
+			"size": 52156,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "fonts/72Mono-Regular.woff2",
+			"size": 21112,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "global.less",
+			"size": 118469,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 300122,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/core/themes/sap_fiori_3/library-parameters.json",
+			"size": 154188,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "library.css",
+			"size": 300110,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "library.less",
+			"size": 9644,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "library.source.less",
+			"size": 279,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		},
+		{
+			"name": "resources.json",
+			"size": 2113
+		},
+		{
+			"name": "shared.less",
+			"size": 8864,
+			"designtime": true,
+			"theme": "sap_fiori_3"
+		}
+	]
+}

@@ -1,0 +1,7 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2026 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/base/Object"],function(e){"use strict";var t=e.extend("sap.ui.integration.util.CardObserver",{constructor:function(t){e.call(this);this._oCard=t;this._oObservedDomRef=null}});t.prototype.destroy=function(){e.prototype.destroy.apply(this,arguments);this._oCard=null;if(this._oObserver){this._oObserver.disconnect();this._oObserver=null}};t.prototype._createObserver=function(){if(!this._oObserver){this._oObserver=new window.IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){this._bIsIntersected=true;this.loadManifest()}}.bind(this),{threshold:[.1]})}.bind(this))}};t.prototype.observe=function(e){if(!this._oObserver){this._createObserver()}if(e!==this._oObservedDomRef){if(this._oObservedDomRef){this._oObserver.unobserve(this._oObservedDomRef)}this._oObserver.observe(e);this._oObservedDomRef=e;this._bIsIntersected=false}};t.prototype.unobserve=function(e){if(this._oObserver&&this._oObservedDomRef===e){this._oObserver.unobserve(e);this._oObservedDomRef=null}};t.prototype.loadManifest=function(){var e=this._oCard.getDomRef();this.unobserve(e);this._oCard.refresh()};t.prototype.isIntersected=function(){return this._bIsIntersected};return t});
+//# sourceMappingURL=CardObserver.js.map

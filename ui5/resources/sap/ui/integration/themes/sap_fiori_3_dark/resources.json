@@ -1,0 +1,48 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 95,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "ListContentItem.less",
+			"size": 323,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 40990,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/integration/themes/sap_fiori_3_dark/library-parameters.json",
+			"size": 120,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.css",
+			"size": 40985,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.less",
+			"size": 916,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "library.source.less",
+			"size": 363,
+			"designtime": true,
+			"theme": "sap_fiori_3_dark"
+		},
+		{
+			"name": "resources.json",
+			"size": 856
+		}
+	]
+}

@@ -1,0 +1,157 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theme",
+			"size": 659,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": ".theming",
+			"size": 94,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "BusyIndicator.less",
+			"size": 972,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "Icon.less",
+			"size": 293,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "base.less",
+			"size": 238762,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Black-full.woff2",
+			"size": 65688,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Black.woff2",
+			"size": 25564,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Bold-full.woff2",
+			"size": 58556,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Bold.woff2",
+			"size": 23684,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Light-full.woff2",
+			"size": 60048,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Light.woff2",
+			"size": 24296,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Regular-full.woff2",
+			"size": 57984,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-Regular.woff2",
+			"size": 23756,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-SemiboldDuplex-full.woff2",
+			"size": 60380,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72-SemiboldDuplex.woff2",
+			"size": 24584,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72Mono-Bold-full.woff2",
+			"size": 53272,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72Mono-Bold.woff2",
+			"size": 21408,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72Mono-Regular-full.woff2",
+			"size": 52156,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/72Mono-Regular.woff2",
+			"size": 21112,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/SAP-icons.ttf",
+			"size": 287444,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "fonts/SAP-icons.woff2",
+			"size": 77964,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "global.less",
+			"size": 118738,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 311940,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/core/themes/sap_horizon_hcw/library-parameters.json",
+			"size": 158945,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.css",
+			"size": 311928,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.less",
+			"size": 7934,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "library.source.less",
+			"size": 303,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		},
+		{
+			"name": "resources.json",
+			"size": 2887
+		},
+		{
+			"name": "shared.less",
+			"size": 6083,
+			"designtime": true,
+			"theme": "sap_horizon_hcw"
+		}
+	]
+}

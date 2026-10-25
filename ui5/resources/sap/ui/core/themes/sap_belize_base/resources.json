@@ -1,0 +1,143 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 161,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "BlindLayer.less",
+			"size": 991,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "BrowserScrollbar.less",
+			"size": 1117,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "BusyIndicator.less",
+			"size": 389,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "CommandShortcutHints.less",
+			"size": 450,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "DragAndDrop.less",
+			"size": 1210,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Icon.less",
+			"size": 3343,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "LocalBusyIndicator.less",
+			"size": 6658,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "SAP-icons.css",
+			"size": 461,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "SAP-icons.less",
+			"size": 342,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "ScrollBar.less",
+			"size": 599,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "Shadow.less",
+			"size": 40,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "TechnicalInfo.less",
+			"size": 2599,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "View.less",
+			"size": 244,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "global.less",
+			"size": 123298,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 127996,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/core/themes/sap_belize_base/library-parameters.json",
+			"size": 78021,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.css",
+			"size": 127983,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.less",
+			"size": 32134,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "library.source.less",
+			"size": 617,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "media.less",
+			"size": 1656,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "parameterClasses.less",
+			"size": 1849,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		},
+		{
+			"name": "resources.json",
+			"size": 2563
+		},
+		{
+			"name": "shared.less",
+			"size": 9333,
+			"designtime": true,
+			"theme": "sap_belize_base"
+		}
+	]
+}

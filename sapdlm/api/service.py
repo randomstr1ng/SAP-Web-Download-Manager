@@ -1,0 +1,344 @@
+"""Service layer: wires config, credentials, client, engine and the event bus.
+
+All portal/engine operations run in worker threads (the engine is synchronous);
+FastAPI endpoints schedule them and report via tasks + WebSocket events.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import threading
+import uuid
+from collections.abc import Callable
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
+from sapdlm import DLM_VERSION, __version__
+from sapdlm.client.basket import BasketContent, BasketItem
+from sapdlm.client.connection import ConnectionConfig
+from sapdlm.client.constants import LocalStatus
+from sapdlm.client.download_client import DownloadClient
+from sapdlm.config import Settings, load_settings, save_settings
+from sapdlm.credentials import CredentialStore
+from sapdlm.engine.component import ComponentProgress
+from sapdlm.engine.manager import DownloadManager
+from sapdlm.engine.state import ObjectRecord, StateStore
+
+logger = logging.getLogger("sapdlm")
+
+
+class EventBus:
+    """Fan-out event broadcast to connected WebSockets (thread-safe publish)."""
+
+    def __init__(self) -> None:
+        self._clients: set = set()
+        self._loop: asyncio.AbstractEventLoop | None = None
+
+    def set_loop(self, loop: asyncio.AbstractEventLoop) -> None:
+        self._loop = loop
+
+    def subscribe(self, websocket) -> None:
+        self._clients.add(websocket)
+
+    def unsubscribe(self, websocket) -> None:
+        self._clients.discard(websocket)
+
+    def publish(self, event: dict[str, Any]) -> None:
+        """Safe to call from worker threads."""
+        if self._loop is None:
+            return
+
+        def _schedule() -> None:
+            # call_soon_threadsafe only accepts plain callbacks - the async
+            # broadcast must be started as a task on the event loop.
+            asyncio.ensure_future(self._broadcast(event))
+
+        try:
+            self._loop.call_soon_threadsafe(_schedule)
+        except RuntimeError:
+            pass
+
+    async def _broadcast(self, event: dict[str, Any]) -> None:
+        dead = []
+        for ws in list(self._clients):
+            try:
+                await ws.send_json(event)
+            except Exception:
+                dead.append(ws)
+        for ws in dead:
+            self.unsubscribe(ws)
+
+
+class TaskRegistry:
+    """Track background tasks (refresh / downloads / connection tests)."""
+
+    def __init__(self) -> None:
+        self._tasks: dict[str, dict[str, Any]] = {}
+        self._lock = threading.Lock()
+
+    def create(self, kind: str, detail: str = "") -> str:
+        task_id = uuid.uuid4().hex[:12]
+        with self._lock:
+            self._tasks[task_id] = {
+                "id": task_id, "kind": kind, "detail": detail,
+                "state": "running", "error": None,
+                "created": datetime.now(UTC).isoformat(timespec="seconds"),
+            }
+        return task_id
+
+    def finish(self, task_id: str, error: str | None = None) -> None:
+        with self._lock:
+            if task_id in self._tasks:
+                self._tasks[task_id]["state"] = "error" if error else "done"
+                self._tasks[task_id]["error"] = error
+
+    def get(self, task_id: str) -> dict | None:
+        with self._lock:
+            return self._tasks.get(task_id)
+
+
+class Service:
+    """Application state singleton used by all routes."""
+
+    def __init__(
+        self,
+        data_dir: Path,
+        download_dir: Path,
+        http_client=None,
+        component_client_factory=None,
+    ):
+        self.data_dir = Path(data_dir)
+        self.download_dir = Path(download_dir)
+        self.download_dir.mkdir(parents=True, exist_ok=True)
+        self.settings: Settings = load_settings(self.data_dir)
+        if not self.settings.download_store:
+            self.settings.download_store = str(self.download_dir)
+        self.credentials = CredentialStore(self.data_dir)
+        self.store = StateStore(self.data_dir / "app.db")
+        self.events = EventBus()
+        self.tasks = TaskRegistry()
+        self._http_client = http_client
+        self._component_client_factory = component_client_factory
+        self._download_lock = threading.Lock()  # one download task at a time (parity)
+        self.manager = DownloadManager(
+            self.store, self._build_client(), self.download_dir,
+            use_subdir=self.settings.create_subdir,
+            save_description_files=self.settings.save_description,
+            component_client_factory=component_client_factory,
+        )
+        self.basket: BasketContent | None = None
+        # Set during app lifespan (needs a running event loop).
+        self.scheduler = None
+        self._apply_log_level()
+
+    def _apply_log_level(self) -> None:
+        """settings.trace parity: verbose logging for the sapdlm loggers."""
+        logging.getLogger("sapdlm").setLevel(
+            logging.DEBUG if self.settings.trace else logging.INFO
+        )
+
+    # ------------------------------------------------------------------ factories
+
+    def _build_client(self) -> DownloadClient:
+        return DownloadClient(self.connection_config(), http_client=self._http_client)
+
+    def reload_engine(self) -> None:
+        """Apply settings changes to the running engine in place. The
+        DownloadClient instance is kept so busy/connected state survives a
+        settings save (rebuilding it would always show 'not connected')."""
+        manager = self.manager
+        manager.client.config = self.connection_config()
+        manager.download_store = Path(self.settings.download_store)
+        manager.use_subdir = self.settings.create_subdir
+        manager.save_description_files = self.settings.save_description
+
+    def connection_config(self) -> ConnectionConfig:
+        s = self.settings
+        # Trim: autofilled form fields often carry stray spaces, which would
+        # silently break basic authentication (username " S123..." != "S123...").
+        return ConnectionConfig(
+            sap_url=s.sap_url.strip(),
+            username=s.username.strip(),
+            password=self.credentials.get("sap_password"),
+            use_cert_auth=s.use_cert_auth,
+            cert_path=s.cert_path.strip(),
+            cert_key_password=self.credentials.get("cert_key_password"),
+            use_proxy=s.use_proxy,
+            proxy_host=s.proxy_host.strip(),
+            proxy_port=s.proxy_port,
+            proxy_username=s.proxy_username.strip(),
+            proxy_password=self.credentials.get("proxy_password"),
+        )
+
+    # ------------------------------------------------------------------- status
+
+    def is_configured(self) -> bool:
+        if not self.settings.is_complete():
+            return False
+        if self.settings.use_cert_auth:
+            return self.credentials.stored("cert_key_password")
+        return self.credentials.stored("sap_password")
+
+    def status(self) -> dict:
+        client = self.manager.client
+        return {
+            "status": "ok",
+            "app_version": __version__,
+            "dlm_protocol_version": DLM_VERSION,
+            "configured": self.is_configured(),
+            "connected": client.connected,
+            "busy": client.busy,
+            "download_dir": self.settings.download_store,
+            "downloading": self.manager.downloading_keys,
+        }
+
+    # ------------------------------------------------------------------- basket
+
+    def refresh_basket(self) -> dict:
+        """Synchronous basket fetch (run in a worker thread)."""
+        self.manager.client.config = self.connection_config()
+        content = self.manager.client.check_basket_content()
+        self.basket = content
+        for item in content.items.values():
+            record = self.store.get_object(item.dockey) or ObjectRecord(
+                dockey=item.dockey
+            )
+            record.text = item.text
+            record.doctype = item.doc_type
+            record.size_kb = item.size_kb
+            record.global_status = item.global_status
+            record.basket_status = item.basket_status
+            self.store.upsert_object(record)
+        self.events.publish({"type": "status", **self.status()})
+        return self.basket_view()
+
+    def basket_view(self) -> dict:
+        """Current basket merged with local status."""
+        if self.basket is None:
+            return {"refreshed": False, "full_name": "", "items": [],
+                    "upgrade": None, "user_ip": ""}
+        items = []
+        for item in self.basket.items.values():
+            record = self.store.get_object(item.dockey)
+            local_status = record.local_status if record else None
+            items.append({
+                "dockey": item.dockey,
+                "text": item.text,
+                "doc_type": item.doc_type,
+                "size_kb": item.size_kb,
+                "size_text": item.size_text,
+                "reg_date": item.reg_date,
+                "reg_time": item.reg_time,
+                "global_status": item.global_status,
+                "basket_status": item.basket_status,
+                "local_status": local_status,
+                "status_text": item.status_text(
+                    local_status,
+                    downloading=self.manager.is_downloading(item.dockey),
+                ),
+                "downloading": self.manager.is_downloading(item.dockey),
+            })
+        return {
+            "refreshed": True,
+            "full_name": self.basket.full_name,
+            "user_ip": self.basket.user_ip,
+            "upgrade": (self.basket.upgrade.__dict__ if
+                        (self.basket.upgrade.version or self.basket.upgrade.url)
+                        else None),
+            "items": items,
+        }
+
+    def remove_from_basket(self, dockey: str) -> None:
+        """Delete local data + OBJDEL on the portal (removeFromDownloadBasket)."""
+        self.manager.client.config = self.connection_config()
+        self.manager.delete_local_data(dockey)
+        self.manager.client.remove_from_basket(dockey)
+        if self.basket is not None:
+            self.basket.items.pop(dockey, None)
+        self.events.publish({"type": "status", **self.status()})
+
+    # ---------------------------------------------------------------- downloads
+
+    def download_keys(self, mode: str, keys: list[str] | None) -> list[str]:
+        if mode == "all":
+            if self.basket is not None:
+                return list(self.basket.items.keys())
+            return [r.dockey for r in self.store.list_objects()]
+        return list(keys or [])
+
+    def run_download(self, keys: list[str],
+                     progress: Callable[[ComponentProgress], None] | None = None
+                     ) -> None:
+        """Sequential object processing (original: one object at a time)."""
+        for dockey in keys:
+            self.events.publish({"type": "status", **self.status(),
+                                "action": f"Downloading {dockey}"})
+            try:
+                self.manager.download_object(
+                    dockey,
+                    progress=(lambda update: self.events.publish({
+                        "type": "progress", **vars(update),
+                    })) if progress is None else progress,
+                )
+            except Exception as exc:  # engine aborts on this object, continue
+                logger.warning("download of %s failed: %s", dockey, exc)
+            finally:
+                self.events.publish({"type": "status", **self.status()})
+
+    def pause_download(self, dockey: str) -> bool:
+        return self.manager.stop(dockey)
+
+    def delete_local_data(self, dockey: str) -> None:
+        self.manager.delete_local_data(dockey)
+        self.events.publish({"type": "status", **self.status()})
+
+    # --------------------------------------------------------------- connection
+
+    def test_connection(self) -> tuple[bool, str]:
+        try:
+            self.manager.client.config = self.connection_config()
+            content = self.manager.client.check_basket_content()
+            name = content.full_name or "anonymous"
+            return True, f"Connected. Welcome, {name} ({len(content.items)} item(s) in basket)."
+        except Exception as exc:
+            return False, str(exc)
+
+    # ---------------------------------------------------------------- settings
+
+    def update_settings(self, payload: dict) -> Settings:
+        current = self.settings.to_dict()
+        current.update({k: v for k, v in payload.items() if k in current})
+        # Store normalized: strip stray whitespace from all text fields
+        # (autofilled form inputs are the classic source - a leading space in
+        # the S-user breaks basic auth with a confusing 401 PWD_WRONG).
+        for key, value in current.items():
+            if isinstance(value, str):
+                current[key] = value.strip()
+        self.settings = Settings.from_dict(current)
+        save_settings(self.data_dir, self.settings)
+        self.reload_engine()
+        self._apply_log_level()
+        return self.settings
+
+    def settings_view(self) -> dict:
+        view = self.settings.to_dict()
+        view["configured"] = self.is_configured()
+        view["complete"] = self.settings.is_complete()
+        return view
+
+    # ------------------------------------------------------------------ protocol
+
+    def object_protocol(self, dockey: str) -> list[dict]:
+        return [
+            {"ts": p.ts, "type": p.type, "message": p.message}
+            for p in self.store.protocol(dockey)
+        ]
+
+    def history(self) -> list[dict]:
+        return [
+            {"dockey": h.dockey, "text": h.text, "doc_type": h.doctype,
+             "version": h.version, "date": h.date}
+            for h in self.store.history()
+        ]

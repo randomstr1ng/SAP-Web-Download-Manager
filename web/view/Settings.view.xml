@@ -1,0 +1,68 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" controllerName="dlm.controller.Settings">
+<Page id="settingsPage" title="{i18n>settingsTitle}" showNavButton="true"
+	  navButtonPress=".onBack" floatingFooter="true">
+	<content>
+		<VBox class="sapUiMediumMargin">
+			<Panel headerText="{i18n>connection}" expandable="false">
+				<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+					<Label text="{i18n>sapUrl}"/>
+					<Input value="{/settings/sap_url}" type="Text" placeholder="https://..."/>
+					<Label text="{i18n>userName}"/>
+					<Input value="{/settings/username}"/>
+					<Label text="{i18n>password}"/>
+					<Input value="{/settings/sap_password}" type="Password"
+						placeholder="{/credentials/sap_password/value}"/>
+					<Label text="{i18n>authMode}"/>
+					<RadioButton groupName="auth" text="{i18n>basicAuth}" selected="{/settings/use_cert_auth_false}"/>
+					<RadioButton groupName="auth" text="{i18n>certAuth}" selected="{/settings/use_cert_auth}"/>
+					<Label text="{i18n>certPath}" visible="{/settings/use_cert_auth}"/>
+					<Input value="{/settings/cert_path}" visible="{/settings/use_cert_auth}"/>
+					<Label text="{i18n>certKeyPassword}" visible="{/settings/use_cert_auth}"/>
+					<Input value="{/settings/cert_key_password}" type="Password" visible="{/settings/use_cert_auth}"/>
+				</form:SimpleForm>
+			</Panel>
+			<Panel headerText="{i18n>proxy}" expandable="true" expanded="false">
+				<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+					<Label text="{i18n>useProxy}"/>
+					<Switch state="{/settings/use_proxy}"/>
+					<Label text="{i18n>proxyHost}"/>
+					<Input value="{/settings/proxy_host}" enabled="{/settings/use_proxy}"/>
+					<Label text="{i18n>proxyPort}"/>
+					<Input value="{/settings/proxy_port}" type="Number" enabled="{/settings/use_proxy}"/>
+					<Label text="{i18n>proxyUser}"/>
+					<Input value="{/settings/proxy_username}" enabled="{/settings/use_proxy}"/>
+					<Label text="{i18n>proxyPassword}"/>
+					<Input value="{/settings/proxy_password}" type="Password" enabled="{/settings/use_proxy}"/>
+				</form:SimpleForm>
+			</Panel>
+			<Panel headerText="{i18n>storage}" expandable="false">
+				<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+					<Label text="{i18n>downloadStore}"/>
+					<Input value="{/settings/download_store}"/>
+					<Label text="{i18n>createSubdir}"/>
+					<Switch state="{/settings/create_subdir}"/>
+					<Label text="{i18n>saveDescription}"/>
+					<Switch state="{/settings/save_description}"/>
+				</form:SimpleForm>
+			</Panel>
+			<Panel headerText="{i18n>options}" expandable="false">
+				<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+					<Label text="{i18n>rememberCredentials}"/>
+					<Switch state="{/settings/remember_credentials}"/>
+					<Label text="{i18n>autoStart}"/>
+					<Switch state="{/settings/autostart_download}"/>
+					<Label text="{i18n>trace}"/>
+					<Switch state="{/settings/trace}"/>
+				</form:SimpleForm>
+			</Panel>
+		</VBox>
+	</content>
+	<footer>
+		<OverflowToolbar>
+			<ToolbarSpacer/>
+			<Button text="{i18n>testConnection}" icon="sap-icon://connected" press=".onTestConnection"/>
+			<Button text="{i18n>save}" type="Emphasized" press=".onSave"/>
+		</OverflowToolbar>
+	</footer>
+</Page>
+</mvc:View>

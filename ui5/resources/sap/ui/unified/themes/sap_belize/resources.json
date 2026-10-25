@@ -1,0 +1,106 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 738,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "Calendar.less",
+			"size": 14496,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "CalendarLegend.less",
+			"size": 471,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "CalendarRow.less",
+			"size": 2969,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ColorPicker.less",
+			"size": 594,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ColorPicker/Alphaslider_BG.png",
+			"size": 2936,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ColorPicker/Swatch_BG.png",
+			"size": 954,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "FileUploader.less",
+			"size": 1715,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "Menu.less",
+			"size": 1024,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ShellHeader.less",
+			"size": 975,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ShellLayout.less",
+			"size": 1433,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ShellOverlay.less",
+			"size": 763,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 266093,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/unified/themes/sap_belize/library-parameters.json",
+			"size": 14157,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.css",
+			"size": 265943,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.less",
+			"size": 26088,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.source.less",
+			"size": 1161,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "resources.json",
+			"size": 1828
+		}
+	]
+}

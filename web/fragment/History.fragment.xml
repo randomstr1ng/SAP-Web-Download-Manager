@@ -1,0 +1,23 @@
+<Dialog xmlns="sap.m" title="{i18n>historyTitle}" contentWidth="800px">
+	<content>
+		<Table items="{dlg>/entries}" growing="false">
+			<columns>
+				<Column><Text text="{i18n>date}"/></Column>
+				<Column><Text text="{i18n>object}"/></Column>
+				<Column><Text text="{i18n>status}"/></Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{dlg>date}"/>
+						<Text text="{dlg>text}"/>
+						<Text text="{dlg>dockey}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</content>
+	<beginButton>
+		<Button text="{i18n>close}" press=".onDialogClose"/>
+	</beginButton>
+</Dialog>

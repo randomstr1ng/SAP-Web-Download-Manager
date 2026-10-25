@@ -1,0 +1,36 @@
+<Dialog xmlns="sap.m" title="{i18n>welcomeTitle}" contentWidth="600px"
+		verticalScrolling="false">
+	<content>
+		<Wizard id="wizard" deepLinking="false" class="sapUiMediumMarginBeginEnd">
+			<WizardStep title="{i18n>wizardStep1}">
+				<Text text="{i18n>wizardIntro}" class="sapUiSmallMarginBottom"/>
+				<VBox>
+					<Label text="{i18n>sapUrl}"/>
+					<Input value="{wizard>/sap_url}" placeholder="https://launchpad.support.sap.com"/>
+					<Label text="{i18n>userName}"/>
+					<Input value="{wizard>/username}"/>
+				</VBox>
+			</WizardStep>
+			<WizardStep title="{i18n>wizardStep2}">
+				<Text text="{i18n>wizardStep2Info}" class="sapUiSmallMarginBottom"/>
+				<VBox>
+					<Label text="{i18n>password}"/>
+					<Input value="{wizard>/password}" type="Password"/>
+				</VBox>
+			</WizardStep>
+			<WizardStep title="{i18n>wizardStep3}">
+				<Text text="{i18n>wizardStep3Info}" class="sapUiSmallMarginBottom"/>
+				<VBox>
+					<Label text="{i18n>downloadStore}"/>
+					<Input value="{wizard>/download_store}" placeholder="/data/downloads"/>
+				</VBox>
+			</WizardStep>
+		</Wizard>
+	</content>
+	<beginButton>
+		<Button text="{i18n>finish}" type="Emphasized" press=".onWizardFinish"/>
+	</beginButton>
+	<endButton>
+		<Button text="{i18n>cancel}" press=".onWizardCancel"/>
+	</endButton>
+</Dialog>

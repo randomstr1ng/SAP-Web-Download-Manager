@@ -1,0 +1,78 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theming",
+			"size": 738,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "BlockLayout.less",
+			"size": 10282,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "FormLayout.less",
+			"size": 681,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "GridLayout.less",
+			"size": 873,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ResponsiveGridLayout.less",
+			"size": 584,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "ResponsiveLayout.less",
+			"size": 842,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "Splitter.less",
+			"size": 226,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 319031,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/layout/themes/sap_belize/library-parameters.json",
+			"size": 7478,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.css",
+			"size": 318562,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.less",
+			"size": 14978,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "library.source.less",
+			"size": 1091,
+			"designtime": true,
+			"theme": "sap_belize"
+		},
+		{
+			"name": "resources.json",
+			"size": 1338
+		}
+	]
+}

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+downloads/
+.env
+.pytest_cache/
+*.egg-info/
+
+# do not publish: proprietary SAP jar + decompiled sources
+_original/

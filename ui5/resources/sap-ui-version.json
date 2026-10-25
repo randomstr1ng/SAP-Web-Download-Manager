@@ -1,0 +1,12 @@
+{
+  "name": "openui5",
+  "version": "1.148.10",
+  "buildTimestamp": "2025-10-20T00:00:00Z",
+  "gav": "com.sap.ui5:openui5-dist-mobile:1.148.10",
+  "libraries": [
+    { "name": "sap.ui.core", "version": "1.148.10" },
+    { "name": "sap.m", "version": "1.148.10" },
+    { "name": "sap.ui.layout", "version": "1.148.10" },
+    { "name": "sap.ui.unified", "version": "1.148.10" }
+  ]
+}

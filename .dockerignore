@@ -1,0 +1,11 @@
+_original/
+docs/
+tests/
+.venv/
+data/
+downloads/
+.git/
+.gitignore
+*.md
+docker-compose.yml
+Dockerfile

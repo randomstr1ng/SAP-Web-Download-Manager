@@ -1,0 +1,115 @@
+{
+	"_version": "1.1.0",
+	"resources": [
+		{
+			"name": ".theme",
+			"size": 643,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": ".theming",
+			"size": 688,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "base.less",
+			"size": 29859,
+			"designtime": true,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Bold-full.woff2",
+			"size": 58556,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Bold.woff2",
+			"size": 23684,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Light-full.woff2",
+			"size": 60048,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Light.woff2",
+			"size": 24296,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Regular-full.woff2",
+			"size": 57984,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72-Regular.woff2",
+			"size": 23756,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72Mono-Bold-full.woff2",
+			"size": 53272,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72Mono-Bold.woff2",
+			"size": 21408,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72Mono-Regular-full.woff2",
+			"size": 52156,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "fonts/72Mono-Regular.woff2",
+			"size": 21112,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "global.less",
+			"size": 6303,
+			"designtime": true,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "library-RTL.css",
+			"size": 342307,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "library-parameters.json",
+			"module": "sap/ui/core/themes/sap_belize_plus/library-parameters.json",
+			"size": 224906,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "library.css",
+			"size": 342290,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "library.less",
+			"size": 1212,
+			"designtime": true,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "library.source.less",
+			"size": 260,
+			"designtime": true,
+			"theme": "sap_belize_plus"
+		},
+		{
+			"name": "resources.json",
+			"size": 2090
+		},
+		{
+			"name": "shared.less",
+			"size": 732,
+			"designtime": true,
+			"theme": "sap_belize_plus"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+<Dialog xmlns="sap.m" title="{i18n>protocolTitle}" contentWidth="700px">
+	<content>
+		<List items="{dlg>/entries}" growing="false">
+			<items>
+				<CustomListItem>
+					<HBox class="sapUiTinyMargin">
+						<Text text="{dlg>ts}" width="170px" wrapping="false"/>
+						<Text text="{dlg>message}"/>
+					</HBox>
+				</CustomListItem>
+			</items>
+		</List>
+	</content>
+	<beginButton>
+		<Button text="{i18n>close}" press=".onDialogClose"/>
+	</beginButton>
+</Dialog>
