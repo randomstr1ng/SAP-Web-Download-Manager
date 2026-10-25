@@ -1,6 +1,6 @@
 # SAP Web Download Manager
 
-A web-based reimplementation of the official **SAP Download Manager** — the
+A web-based reimplementation of the official **SAP Download Manager** - the
 Java desktop tool that downloads your [SAP Support Portal download
 basket](https://support.sap.com/en/my-support/software-downloads.html?isu_page=1&anchorId=section_995042677)
 to your machine. This fork keeps the protocol and features of the original,
@@ -14,13 +14,13 @@ server: operate it from any browser, files land on the server.
 ## Highlights
 
 - Same wire protocol as the official client (Support Portal OData and legacy
-  Service Marketplace) — your S-User and password just work
+  Service Marketplace) - your S-User and password just work
 - Resumable downloads with crash-safe checkpoints; pause/resume/cancel
 - Scheduled and fully automatic (startup) downloads
 - S-User/password or X.509 client certificate; optional proxy
 - Fiori-style OpenUI5 UI, light and dark theme, live progress over WebSocket
 - REST API + MCP server for AI-agent remote control
-- Ships as a Docker image — headless server, internal plain HTTP
+- Ships as a Docker image - headless server, internal plain HTTP
 
 ## Quickstart
 
@@ -50,11 +50,11 @@ docker compose run --rm sapdlm python -m sapdlm.main --auto
 
 ## Documentation
 
-- **[How it works](docs/HOWITWORKS.md)** — architecture, download engine,
+- **[How it works](docs/HOWITWORKS.md)** - architecture, download engine,
   configuration, credentials, API/MCP reference, security model, Docker notes
-- **[Protocol reference](docs/PROTOCOL.md)** — the wire protocol of the
+- **[Protocol reference](docs/PROTOCOL.md)** - the wire protocol of the
   official Download Manager, reverse engineered and documented
-- **[Development](docs/DEVELOPMENT.md)** — venv setup, tests, lint, tooling
+- **[Development](docs/DEVELOPMENT.md)** - venv setup, tests, lint, tooling
 
 ## Screenshots
 
@@ -77,12 +77,4 @@ dependencies are MIT/BSD/Apache-2.0 (see `pyproject.toml`).
 - The basket is filled on the Software Download Center website; this tool
   reads and downloads it (adding items is not part of the original client's
   protocol).
-- The vendored OpenUI5 runtime is ~133 MB — clones are correspondingly sized.
-
-## Releases
-
-Pushing a `v*` git tag (e.g. `v0.1.0`) triggers the release workflow: it runs
-the test suite and publishes the container image to
-[ghcr.io/randomstr1ng/sap-web-download-manager](https://github.com/randomstr1ng/SAP-Web-Download-Manager/pkgs/container/sap-web-download-manager)
-with the tags `0.1.0`, `0.1` and `latest`. CI runs on every push and validates
-the Docker build.
+- The vendored OpenUI5 runtime is ~133 MB - clones are correspondingly sized.
