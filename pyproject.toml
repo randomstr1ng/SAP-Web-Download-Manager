@@ -1,6 +1,7 @@
 [project]
 name = "sapdlm"
 version = "0.1.0"
+license = "Apache-2.0"
 description = "SAP Download Manager - Python web rewrite (feature-compatible with DLManager.jar 3.2.1)"
 requires-python = ">=3.12"
 dependencies = [

@@ -55,6 +55,12 @@ docker compose run --rm sapdlm python -m sapdlm.main --auto
 | ![First-run wizard](docs/screenshots/wizard.png) | ![Settings](docs/screenshots/settings.png) |
 | ![Dark mode](docs/screenshots/dark.png) | |
 
+## License
+
+[Apache License, Version 2.0](LICENSE). The vendored OpenUI5 runtime is
+likewise Apache-2.0 (see [ui5/LICENSE.txt](ui5/LICENSE.txt)); Python
+dependencies are MIT/BSD/Apache-2.0 (see `pyproject.toml`).
+
 ## Notes
 
 - This is an unofficial community project, not affiliated with or endorsed by

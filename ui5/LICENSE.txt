@@ -1,0 +1,16 @@
+OpenUI5 Runtime (Apache License, Version 2.0)
+Copyright 2009-2026 SAP SE or UI5 contributors
+
+This directory contains a pruned copy of the OpenUI5 runtime
+(openui5-runtime-mobile 1.148.10), downloaded from
+https://github.com/UI5/openui5/releases and distributed under the
+Apache License, Version 2.0.
+
+Modifications: removed debug files (*-dbg.js), TypeScript sources and
+unused libraries (sap.f, sap.tnt, sap.uxap, sap.ui.test, sap.ui.support,
+sap.ui.mdc); added a generated sap-ui-version.json required for the
+UI5 theming lifecycle.
+
+The full Apache License, Version 2.0 text is available in the repository
+root (LICENSE) and at http://www.apache.org/licenses/LICENSE-2.0.
+Upstream license: https://github.com/UI5/openui5/blob/master/LICENSE.txt
