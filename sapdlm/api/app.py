@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from sapdlm import DLM_VERSION, __version__
@@ -52,6 +52,10 @@ async def lifespan(app: FastAPI):
     factory = getattr(app.state, "service_factory", None) or Service
     service = factory(data_dir=data_dir, download_dir=download_dir)
     service.events.set_loop(asyncio.get_running_loop())
+    # Metrics (Prometheus text format) - installed once per service.
+    from sapdlm.api.metrics import install_metrics
+
+    install_metrics(service)
     app.state.service = service
 
     # One-shot scheduler: re-arm persisted schedule, honor autostart.
@@ -164,6 +168,14 @@ def create_app(service_factory=None) -> FastAPI:
 
     # MCP endpoint (mounted sub-app; token guard middleware above).
     app.mount("/mcp", mcp_http)
+
+    @app.get("/metrics", dependencies=[Depends(require_admin)])
+    def prometheus_metrics(request: Request) -> PlainTextResponse:
+        """Prometheus text format (downloads, failures, bytes, gauges)."""
+        return PlainTextResponse(
+            request.app.state.service.metrics.render(),
+            media_type="text/plain; version=0.0.4; charset=utf-8",
+        )
 
     @app.get("/api/status")
     def api_status() -> JSONResponse:
