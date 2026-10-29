@@ -29,6 +29,7 @@ class SettingsPayload(BaseModel):
     save_description: bool | None = None
     remember_credentials: bool | None = None
     trace: bool | None = None
+    webhook_url: str | None = None
     schedule_at: str | None = None
     schedule_mode: str | None = None
     autostart_download: bool | None = None
@@ -38,6 +39,7 @@ class CredentialsPayload(BaseModel):
     sap_password: str | None = None
     proxy_password: str | None = None
     cert_key_password: str | None = None
+    webhook_secret: str | None = None
 
 
 @router.get("/config")

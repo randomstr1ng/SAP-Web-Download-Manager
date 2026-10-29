@@ -112,6 +112,7 @@ class Service:
         download_dir: Path,
         http_client=None,
         component_client_factory=None,
+        webhook_client=None,
     ):
         self.data_dir = Path(data_dir)
         self.download_dir = Path(download_dir)
@@ -124,6 +125,8 @@ class Service:
         self.events = EventBus()
         self.tasks = TaskRegistry()
         self._http_client = http_client
+        self._webhook_client = webhook_client or httpx.Client(timeout=5.0)
+        self.metrics = None
         self._component_client_factory = component_client_factory
         self._download_lock = threading.Lock()  # one download task at a time (parity)
         self.manager = DownloadManager(
@@ -303,26 +306,72 @@ class Service:
     def run_download(self, keys: list[str],
                      progress: Callable[[ComponentProgress], None] | None = None
                      ) -> None:
-        """Sequential object processing (original: one object at a time)."""
+        """Sequential object processing (original: one object at a time).
+        Tracks metrics and sends webhook notifications per object outcome."""
         for dockey in keys:
             self.events.publish({"type": "status", **self.status(),
                                 "action": f"Downloading {dockey}"})
             try:
-                self.manager.download_object(
-                    dockey,
-                    progress=(lambda update: self.events.publish({
-                        "type": "progress", **vars(update),
-                    })) if progress is None else progress,
-                )
+                done = self.manager.download_object(
+                    dockey, progress=self._progress_publisher(progress))
+                if done:
+                    metrics = getattr(self, "metrics", None)
+                    if metrics is not None:
+                        metrics.track_object_finished(dockey, success=True)
+                    self._send_webhook("completed", dockey)
             except Exception as exc:  # engine aborts on this object, continue
+                metrics = getattr(self, "metrics", None)
+                if metrics is not None:
+                    metrics.track_object_finished(dockey, success=False)
+                self._send_webhook("failed", dockey)
                 logger.warning("download of %s failed: %s", dockey, exc)
             finally:
                 self.events.publish({"type": "status", **self.status()})
+
+    def _progress_publisher(
+        self, progress: Callable[[ComponentProgress], None] | None
+    ) -> Callable[[ComponentProgress], None]:
+        def publish(update: ComponentProgress) -> None:
+            metrics = getattr(self, "metrics", None)
+            if metrics is not None:
+                metrics.track_progress(update.dockey, update.bytes_committed)
+            if progress is not None:
+                progress(update)
+            else:
+                self.events.publish({"type": "progress", **vars(update)})
+
+        return publish
+
+    def _send_webhook(self, event: str, dockey: str) -> None:
+        """POST a JSON notification to the configured webhook (if any).
+        Fire-and-forget: errors are logged, never propagated."""
+        url = self.settings.webhook_url
+        if not url:
+            return
+        record = self.store.get_object(dockey)
+        payload = {
+            "event": event,
+            "dockey": dockey,
+            "text": record.text if record else "",
+            "timestamp": datetime.now(UTC).isoformat(timespec="seconds"),
+        }
+        headers = {"Content-Type": "application/json"}
+        secret = self.credentials.get("webhook_secret")
+        if secret:
+            headers["X-Webhook-Secret"] = secret
+        try:
+            self._webhook_client.post(url, json=payload, headers=headers,
+                                      timeout=5)
+        except Exception as exc:  # noqa: BLE001 - must never break downloads
+            logger.warning("webhook delivery to %s failed: %s", url, exc)
 
     def pause_download(self, dockey: str) -> bool:
         return self.manager.stop(dockey)
 
     def delete_local_data(self, dockey: str) -> None:
+        metrics = getattr(self, "metrics", None)
+        if metrics is not None:
+            metrics.forget_object(dockey)  # reset byte delta for redownloads
         self.manager.delete_local_data(dockey)
         self.events.publish({"type": "status", **self.status()})
 

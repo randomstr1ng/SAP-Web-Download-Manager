@@ -31,6 +31,7 @@ sap.ui.define([
 				oConfig.sap_password = oCreds.sap_password.stored ? MASK : "";
 				oConfig.proxy_password = oCreds.proxy_password.stored ? MASK : "";
 				oConfig.cert_key_password = oCreds.cert_key_password.stored ? MASK : "";
+				oConfig.webhook_secret = oCreds.webhook_secret.stored ? MASK : "";
 				oConfig.use_cert_auth_false = !oConfig.use_cert_auth;
 				that._oModel.setProperty("/settings", oConfig);
 				that._bSecretsLoaded = true;
@@ -58,12 +59,14 @@ sap.ui.define([
 					save_description: oS.save_description,
 					remember_credentials: oS.remember_credentials,
 					autostart_download: oS.autostart_download,
-					trace: oS.trace
+					trace: oS.trace,
+					webhook_url: String(oS.webhook_url || "").trim()
 				},
 				credentials: {
 					sap_password: oS.sap_password,
 					proxy_password: oS.proxy_password,
-					cert_key_password: oS.cert_key_password
+					cert_key_password: oS.cert_key_password,
+					webhook_secret: oS.webhook_secret
 				}
 			};
 		},

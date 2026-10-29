@@ -1,13 +1,13 @@
 """Prometheus text-format metrics (no client dependency).
 
 Counters and gauges for downloads, failures, transferred bytes and the
-basket size. Exposed at GET /metrics.
+basket size. Exposed at GET /metrics. The service calls the tracking
+methods from its download loop (sapdlm/api/service.py).
 """
 
 from __future__ import annotations
 
 import threading
-from collections.abc import Callable
 
 from sapdlm.api.service import Service
 
@@ -92,50 +92,10 @@ class Metrics:
 
 
 def install_metrics(service: Service) -> Metrics:
-    """Attach a Metrics instance to the service and hook it into the engine.
-
-    Called once during app startup; also re-attached after settings reload
-    (Service.reload_engine keeps the same manager, so the hooks survive).
-    """
+    """Create the Metrics registry and attach it to the service. Called once
+    during app startup; Service.run_download/delete_local_data call the
+    tracking methods."""
     if getattr(service, "metrics", None) is not None:
-        return service.metrics  # already installed
-
-    metrics = Metrics(service)
-    service.metrics = metrics
-
-    original_run = service.run_download
-
-    def run_download_with_metrics(keys: list[str],
-                                  progress: Callable | None = None) -> None:
-        def progress_hook(update):
-            metrics.track_progress(update.dockey, update.bytes_committed)
-            if progress is not None:
-                progress(update)
-            else:
-                service.events.publish({"type": "progress", **vars(update)})
-
-        for dockey in keys:
-            service.events.publish({"type": "status", **service.status(),
-                                    "action": f"Downloading {dockey}"})
-            try:
-                service.manager.download_object(dockey, progress=progress_hook)
-                metrics.track_object_finished(dockey, success=True)
-            except Exception as exc:  # engine aborts on this object
-                metrics.track_object_finished(dockey, success=False)
-                from sapdlm.api.service import logging
-                logging.getLogger("sapdlm").warning(
-                    "download of %s failed: %s", dockey, exc)
-            finally:
-                service.events.publish({"type": "status", **service.status()})
-
-    service.run_download = run_download_with_metrics  # type: ignore[method-assign]
-
-    # byte deltas must reset when local data is deleted
-    original_delete = service.delete_local_data
-
-    def delete_local_data_with_metrics(dockey: str) -> None:
-        metrics.forget_object(dockey)
-        original_delete(dockey)
-
-    service.delete_local_data = delete_local_data_with_metrics  # type: ignore[method-assign]
-    return metrics
+        return service.metrics
+    service.metrics = Metrics(service)
+    return service.metrics

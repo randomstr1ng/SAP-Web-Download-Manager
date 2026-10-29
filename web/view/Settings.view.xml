@@ -53,6 +53,10 @@
 					<Switch state="{/settings/autostart_download}"/>
 					<Label text="{i18n>trace}"/>
 					<Switch state="{/settings/trace}"/>
+					<Label text="{i18n>webhookUrl}"/>
+					<Input value="{/settings/webhook_url}" placeholder="https://..."/>
+					<Label text="{i18n>webhookSecret}"/>
+					<Input value="{/settings/webhook_secret}" type="Password"/>
 				</form:SimpleForm>
 			</Panel>
 		</VBox>

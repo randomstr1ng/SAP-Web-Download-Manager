@@ -7,8 +7,8 @@ planned; requesting them raises NotImplementedError.
 
 Secrets are never returned over the API: reads for the API use ``masked()``,
 and PUT round-trips keep existing values when the client sends the mask.
-Environment variables (DLM_SAP_PASSWORD, DLM_PROXY_PASSWORD, DLM_PRVT_KEY_PASSWORD)
-override the store for one run without persisting (Application /p- /r- parity).
+Environment variables (DLM_SAP_PASSWORD, DLM_PROXY_PASSWORD, DLM_PRVT_KEY_PASSWORD,
+DLM_WEBHOOK_SECRET) override the store for one run without persisting (Application /p- /r- parity).
 """
 
 from __future__ import annotations
@@ -19,12 +19,13 @@ from pathlib import Path
 
 MASK = "******"
 
-SECRET_KEYS = ("sap_password", "proxy_password", "cert_key_password")
+SECRET_KEYS = ("sap_password", "proxy_password", "cert_key_password", "webhook_secret")
 
 ENV_OVERRIDES = {
     "sap_password": "DLM_SAP_PASSWORD",
     "proxy_password": "DLM_PROXY_PASSWORD",
     "cert_key_password": "DLM_PRVT_KEY_PASSWORD",
+    "webhook_secret": "DLM_WEBHOOK_SECRET",
 }
 
 
