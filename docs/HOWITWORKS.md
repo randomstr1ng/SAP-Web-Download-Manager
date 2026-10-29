@@ -51,6 +51,8 @@ canceling a running basket refresh are minor known gaps.
 │  mcp.py  MCP tool server at /mcp/mcp             │
 │  service.py  wiring: settings, credentials, tasks │
 │  scheduler.py  one-shot scheduled downloads       │
+│  watcher.py  periodic refresh + auto-download     │
+│  metrics.py  Prometheus /metrics endpoint        │
 ├───────────────────────────────────────────────────┤
 │ Download engine                                   │
 │  manager.py  per-object state machine             │
@@ -92,7 +94,9 @@ from the configured URL).
 
 Every step writes timestamped entries to the per-object protocol log
 (viewable in the UI), and progress events (bytes, total, speed, component
-count) are pushed live over the WebSocket.
+count) are pushed live over the WebSocket. Objects run one after another by
+default; `max_concurrent_objects` runs several object state machines in
+parallel (components within an object always stay sequential).
 
 ## Configuration
 
@@ -112,16 +116,22 @@ persisted to `<data>/config.json`. All text fields are whitespace-normalized
 | `remember_credentials` | Keep credentials on the server (else memory-only) |
 | `trace` | Verbose logging |
 | `autostart_download` | Download the whole basket at server startup |
+| `max_concurrent_objects` | Objects downloaded in parallel (default 1 = one after another, like the original) |
+| `component_retries` | Auto-retry attempts per component download (default 3) |
+| `watch_mode` / `watch_interval` | Periodically refresh the basket (minutes, default 15) and auto-download items that appeared since the last refresh; cycles are skipped while downloads are running |
+| `webhook_url` | POST a JSON notification (`event`, `dockey`, `text`, `timestamp`) after each object completes or fails; the optional secret below is sent as `X-Webhook-Secret` |
 
 ### Credentials
 
-Secrets (`sap_password`, `proxy_password`, `cert_key_password`) are stored in
+Secrets (`sap_password`, `proxy_password`, `cert_key_password`,
+`webhook_secret`) are stored in
 `<data>/credentials.json` (mode 0600) — the file backend. The API **never**
 returns secret values, only a `stored` flag and a mask (`******`). Sending the
 mask (or an empty string) keeps the stored value; only a new non-empty value
 replaces it, and only the explicit `DELETE /api/credentials/{key}` clears it.
 Environment variables (`DLM_SAP_PASSWORD`, `DLM_PROXY_PASSWORD`,
-`DLM_PRVT_KEY_PASSWORD`) override the store for one run without persisting.
+`DLM_PRVT_KEY_PASSWORD`, `DLM_WEBHOOK_SECRET`) override the store for one run
+without persisting.
 
 ### Environment variables
 
@@ -139,12 +149,13 @@ Environment variables (`DLM_SAP_PASSWORD`, `DLM_PROXY_PASSWORD`,
 REST under `/api` (interactive docs at `/docs`):
 
 - `GET /api/state`, `GET /api/status`, `GET /api/health`
-- `GET /api/basket`, `POST /api/basket/refresh`, `DELETE /api/basket/{dockey}`
+- `GET /api/basket`, `POST /api/basket/refresh`, `POST /api/basket/refresh/cancel`, `DELETE /api/basket/{dockey}`
 - `POST /api/downloads/start` (keys or `mode=all`), `POST .../{dockey}/pause|resume|cancel`, `DELETE .../{dockey}/local`
 - `GET /api/objects/{dockey}/protocol`, `GET /api/history`
 - `GET/PUT /api/config`, `POST /api/config/test`, `GET/PUT /api/credentials`
 - `GET/POST/DELETE /api/schedule`
 - `GET /api/tasks/{id}` — background tasks return `202` + task id
+- `GET /metrics` — Prometheus text format (admin-protected like the API)
 
 WebSocket `/ws` pushes events: `hello`, `status`, `progress`
 (bytes/total/speed/component), `error`. UI assets are served with

@@ -16,10 +16,12 @@ server: operate it from any browser, files land on the server.
 - Same wire protocol as the official client (Support Portal OData and legacy
   Service Marketplace) - your S-User and password just work
 - Resumable downloads with crash-safe checkpoints; pause/resume/cancel
-- Scheduled and fully automatic (startup) downloads
+- Scheduled, fully automatic (startup) and watch-mode downloads
+  (auto-download new basket items); optional parallel object downloads
 - S-User/password or X.509 client certificate; optional proxy
 - Fiori-style OpenUI5 UI, light and dark theme, live progress over WebSocket
-- REST API + MCP server for AI-agent remote control
+- REST API + MCP server for AI-agent remote control; Prometheus metrics and
+  webhook notifications
 - Ships as a Docker image - headless server, internal plain HTTP
 
 ## Quickstart

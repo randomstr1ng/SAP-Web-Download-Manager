@@ -69,6 +69,7 @@ export DLM_ADMIN_USER=admin             # optional HTTP Basic auth for /api
 export DLM_ADMIN_PASSWORD=...
 export DLM_MCP_TOKEN=...                # optional Bearer token for /mcp
 export DLM_SAP_PASSWORD=...             # one-run secret override (not persisted)
+export DLM_WEBHOOK_SECRET=...           # webhook secret override (not persisted)
 ```
 
 ## Tests
