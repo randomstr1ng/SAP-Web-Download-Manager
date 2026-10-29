@@ -18,8 +18,11 @@ server: operate it from any browser, files land on the server.
 - Resumable downloads with crash-safe checkpoints; pause/resume/cancel
 - Scheduled, fully automatic (startup) and watch-mode downloads
   (auto-download new basket items); optional parallel object downloads
+- Fetched files can be pulled straight from the server through the
+  browser - no SSH/SMB needed
 - S-User/password or X.509 client certificate; optional proxy
-- Fiori-style OpenUI5 UI, light and dark theme, live progress over WebSocket
+- Fiori-style OpenUI5 UI, light and dark theme, live progress over
+  WebSocket, English/German
 - REST API + MCP server for AI-agent remote control; Prometheus metrics and
   webhook notifications
 - Ships as a Docker image - headless server, internal plain HTTP

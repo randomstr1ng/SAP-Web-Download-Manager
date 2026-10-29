@@ -156,7 +156,8 @@ REST under `/api` (interactive docs at `/docs`):
   `GET /api/objects/{dockey}/files/{name}` streams one from the download
   store (attachment, HTTP Range/`206` support, resume-friendly); only
   files recorded for that object and still confined to the store are served
-  — the detail dialog links each completed file
+  — the basket table shows a download icon per completed object (details
+  dialog: one link per file; multi-file objects open the dialog instead)
 - `GET/PUT /api/config`, `POST /api/config/test`, `GET/PUT /api/credentials`
 - `GET/POST/DELETE /api/schedule`
 - `GET /api/tasks/{id}` — background tasks return `202` + task id
@@ -165,6 +166,10 @@ REST under `/api` (interactive docs at `/docs`):
 WebSocket `/ws` pushes events: `hello`, `status`, `progress`
 (bytes/total/speed/component), `error`. UI assets are served with
 `Cache-Control: no-cache` so rebuilds never mix stale modules.
+
+The UI is localized (English base bundle, German translation). UI5 picks
+the browser locale automatically; the Settings page has a language selector
+whose choice is stored in the browser.
 
 ### MCP server
 
