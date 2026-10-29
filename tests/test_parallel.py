@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import threading
 import time
 from pathlib import Path
@@ -31,28 +30,43 @@ class Portal:
         if path.endswith("/DownloadContentSet"):
             mode = params.get("_MODE")
             if mode == "BASKET_CONTENT":
-                body = {"d": {"results": [
-                    {"Name": "OBJID",
-                     "Value": f"K{i}|SAR|Object {i}|100|1|20241129120000|0"}
-                    for i in (1, 2)
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {
+                                "Name": "OBJID",
+                                "Value": f"K{i}|SAR|Object {i}|100|1|20241129120000|0",
+                            }
+                            for i in (1, 2)
+                        ]
+                    }
+                }
             elif mode == "OBJECT_VERSION":
-                body = {"d": {"results": [
-                    {"Name": "GLOBALSTATUS", "Value": "0"},
-                    {"Name": "INFOHDVERSION", "Value": "17"},
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {"Name": "GLOBALSTATUS", "Value": "0"},
+                            {"Name": "INFOHDVERSION", "Value": "17"},
+                        ]
+                    }
+                }
             elif mode == "DOWNLOAD_START2":
                 dockey = params.get("OBJID")
-                body = {"d": {"results": [
-                    {"Name": "DOCKEY", "Value": dockey},
-                    {"Name": f"DOWNLOAD0_{dockey}.bin",
-                     "Value": f"https://download.sap.com/{dockey}.bin"},
-                    {"Name": "TOKEN_SAPSSO", "Value": "tok"},
-                    {"Name": "DESCRIPTION", "Value": f"Object {dockey}"},
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {"Name": "DOCKEY", "Value": dockey},
+                            {
+                                "Name": f"DOWNLOAD0_{dockey}.bin",
+                                "Value": f"https://download.sap.com/{dockey}.bin",
+                            },
+                            {"Name": "TOKEN_SAPSSO", "Value": "tok"},
+                            {"Name": "DESCRIPTION", "Value": f"Object {dockey}"},
+                        ]
+                    }
+                }
             elif mode == "DOWNLOAD_END":
-                body = {"d": {"results": [{"Name": "BASKETSTATUS",
-                                          "Value": "4"}]}}
+                body = {"d": {"results": [{"Name": "BASKETSTATUS", "Value": "4"}]}}
             elif mode == "OBJDEL":
                 body = {"d": {"results": []}}
             else:
@@ -64,8 +78,7 @@ class Portal:
                 self.max_inflight = max(self.max_inflight, self.inflight)
             try:
                 time.sleep(0.25)  # give a parallel object time to join in
-                return httpx.Response(200,
-                                      content=BODY[path.rsplit("/", 1)[1]])
+                return httpx.Response(200, content=BODY[path.rsplit("/", 1)[1]])
             finally:
                 with self.lock:
                     self.inflight -= 1
@@ -91,15 +104,17 @@ def make_client(tmp_path: Path, monkeypatch, portal: Portal) -> TestClient:
 
 
 def configure(client: TestClient, concurrent: int) -> None:
-    resp = client.put("/api/config", json={
-        "sap_url": "https://launchpad.test",
-        "username": "jane",
-        "download_store": None,
-        "max_concurrent_objects": concurrent,
-    })
+    resp = client.put(
+        "/api/config",
+        json={
+            "sap_url": "https://launchpad.test",
+            "username": "jane",
+            "download_store": None,
+            "max_concurrent_objects": concurrent,
+        },
+    )
     assert resp.status_code == 200
-    assert client.put("/api/credentials",
-                      json={"sap_password": "s3cret"}).status_code == 200
+    assert client.put("/api/credentials", json={"sap_password": "s3cret"}).status_code == 200
 
 
 def wait_task(client: TestClient, task_id: str, timeout=15.0) -> dict:
@@ -149,11 +164,14 @@ def test_default_remains_sequential(tmp_path, monkeypatch):
 def test_setting_clamped_to_minimum_one(tmp_path, monkeypatch):
     portal = Portal()
     with make_client(tmp_path, monkeypatch, portal) as client:
-        resp = client.put("/api/config", json={
-            "sap_url": "https://launchpad.test",
-            "username": "jane",
-            "download_store": None,
-            "max_concurrent_objects": 0,
-        })
+        resp = client.put(
+            "/api/config",
+            json={
+                "sap_url": "https://launchpad.test",
+                "username": "jane",
+                "download_store": None,
+                "max_concurrent_objects": 0,
+            },
+        )
         assert resp.status_code == 200
         assert resp.json()["max_concurrent_objects"] == 1

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import UTC, datetime
+from datetime import datetime
 
 from sapdlm.api.service import Service
 from sapdlm.config import save_settings
@@ -47,7 +47,8 @@ class Scheduler:
         if when <= datetime.now(when.tzinfo):
             logger.info("Scheduled download %s was missed while offline - cleared", when)
             self.service.store.add_protocol(
-                "", "A scheduled download was missed while the server was offline.",
+                "",
+                "A scheduled download was missed while the server was offline.",
             )
             self._clear()
             return
@@ -106,7 +107,10 @@ class Scheduler:
             logger.info("Scheduled download fired but the basket is empty.")
             return
         logger.info("Scheduled download firing for %d object(s).", len(keys))
-        self.service.events.publish({
-            "type": "status", "action": "Scheduled download started",
-        })
+        self.service.events.publish(
+            {
+                "type": "status",
+                "action": "Scheduled download started",
+            }
+        )
         await asyncio.to_thread(service.run_download, keys)

@@ -10,7 +10,7 @@ Differences vs. the official Java client:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import httpx
 
@@ -40,7 +40,7 @@ class ConnectionConfig:
     username: str = ""
     password: str = ""
     use_cert_auth: bool = False
-    cert_path: str = ""      # PEM client certificate (file path)
+    cert_path: str = ""  # PEM client certificate (file path)
     cert_key_password: str = ""  # kept for parity; PEM key has no password
     use_proxy: bool = False
     proxy_host: str = ""
@@ -56,9 +56,7 @@ class ConnectionConfig:
                     "Certificate is not configured in the DLM (HTTP/1.1 401)"
                 )
         elif not self.username.strip() or not self.password.strip():
-            raise AuthenticationConfigError(
-                "Basic is not configured in the DLM (HTTP/1.1 401)"
-            )
+            raise AuthenticationConfigError("Basic is not configured in the DLM (HTTP/1.1 401)")
 
     def effective_url(self) -> str:
         url = self.sap_url.strip()
@@ -162,9 +160,7 @@ class SapConnection:
                     + (f" ({code})" if code else "")
                 )
             if response.status_code >= 400:
-                raise SapIOError(
-                    f"Request failed. Exception: HTTP/1.1 {response.status_code}"
-                )
+                raise SapIOError(f"Request failed. Exception: HTTP/1.1 {response.status_code}")
             return SapResponse(
                 status_code=response.status_code,
                 headers=response.headers,
@@ -174,8 +170,7 @@ class SapConnection:
             )
         raise SapIOError(f"Request failed. Exception: {last_error}; Class: {type(last_error)}")
 
-    def get_with_retries(self, path: str, attempts: int = 5,
-                          stop=None) -> SapResponse:
+    def get_with_retries(self, path: str, attempts: int = 5, stop=None) -> SapResponse:
         """Basket-content fetch: retry up to N times, abort immediately on
         401/403 (DownloadClient.GetBasketContentThread parity). `stop` is a
         threading.Event checked between attempts - canceling a refresh."""

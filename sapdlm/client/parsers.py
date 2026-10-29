@@ -38,6 +38,7 @@ def is_valid_download_url(url: str) -> bool:
 
 # --------------------------------------------------------------------------- helpers
 
+
 def _name_value_pairs(node: object) -> Iterator[tuple[str, str]]:
     """Yield ("Name", "Value") pairs from a JSON document in document order."""
     if isinstance(node, dict):
@@ -61,6 +62,7 @@ def _key_value_lines(text: str) -> Iterator[tuple[str, str]]:
 
 
 # --------------------------------------------------------------------- basket content
+
 
 def parse_basket_content(text: str, style: EndpointStyle) -> BasketContent:
     if style is EndpointStyle.MARKETPLACE:
@@ -213,6 +215,7 @@ def _basket_from_portal(text: str) -> BasketContent:
 
 # ----------------------------------------------------------------------- object version
 
+
 def parse_object_version(text: str, style: EndpointStyle) -> ObjectVersion:
     if style is EndpointStyle.MARKETPLACE:
         info = ObjectVersion()
@@ -227,8 +230,7 @@ def parse_object_version(text: str, style: EndpointStyle) -> ObjectVersion:
                 info.error_info = value
         if info.error_code:
             raise ResponseParseError(
-                f"The SAP Support Portal reported an error: "
-                f"[{info.error_code}] {info.error_info}"
+                f"The SAP Support Portal reported an error: [{info.error_code}] {info.error_info}"
             )
         return info
 
@@ -251,13 +253,13 @@ def parse_object_version(text: str, style: EndpointStyle) -> ObjectVersion:
 
     if info.error_code:
         raise ResponseParseError(
-            f"The SAP Support Portal reported an error: "
-            f"[{info.error_code}] {info.error_info}"
+            f"The SAP Support Portal reported an error: [{info.error_code}] {info.error_info}"
         )
     return info
 
 
 # --------------------------------------------------------------------- download start
+
 
 def parse_download_start(text: str, style: EndpointStyle) -> DownloadStart:
     start = DownloadStart()
@@ -282,7 +284,7 @@ def _consume_download_start_pair(start: DownloadStart, key: str, value: str) -> 
     elif key.startswith("TOKEN"):
         # TOKEN_<rest> => "<rest>=<value>" attached to the most recent component.
         pos = key.find("_")
-        token = f"{key[pos + 1:]}={value}" if pos != -1 else f"{key}={value}"
+        token = f"{key[pos + 1 :]}={value}" if pos != -1 else f"{key}={value}"
         if start.components:
             start.components[-1].token = token
     elif key == "DESCRIPTION":
@@ -293,6 +295,7 @@ def _consume_download_start_pair(start: DownloadStart, key: str, value: str) -> 
 
 
 # ----------------------------------------------------------------------- download end
+
 
 def parse_download_end(text: str, style: EndpointStyle) -> DownloadEnd:
     end = DownloadEnd(error=True)

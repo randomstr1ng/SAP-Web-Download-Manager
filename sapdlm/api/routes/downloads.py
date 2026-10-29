@@ -24,8 +24,9 @@ class StartRequest(BaseModel):
 
 
 @router.post("/downloads/start", status_code=202)
-async def start_downloads(body: StartRequest, request: Request,
-                          background: BackgroundTasks) -> dict:
+async def start_downloads(
+    body: StartRequest, request: Request, background: BackgroundTasks
+) -> dict:
     service = svc(request)
     _require_configured(service)
     keys = service.download_keys(body.mode, body.keys)
@@ -51,8 +52,7 @@ def _resolve_key(service: Service, dockey: str) -> None:
     ):
         raise HTTPException(
             status_code=404,
-            detail=f"There is no item with the object id '{dockey}' in your "
-                   "download basket.",
+            detail=f"There is no item with the object id '{dockey}' in your download basket.",
         )
 
 
@@ -61,13 +61,15 @@ async def pause_download(dockey: str, request: Request) -> dict:
     service = svc(request)
     _resolve_key(service, dockey)
     stopped = service.pause_download(dockey)
-    return {"dockey": dockey, "paused": stopped,
-            "downloading": service.manager.is_downloading(dockey)}
+    return {
+        "dockey": dockey,
+        "paused": stopped,
+        "downloading": service.manager.is_downloading(dockey),
+    }
 
 
 @router.post("/downloads/{dockey}/resume", status_code=202)
-async def resume_download(dockey: str, request: Request,
-                          background: BackgroundTasks) -> dict:
+async def resume_download(dockey: str, request: Request, background: BackgroundTasks) -> dict:
     service = svc(request)
     _resolve_key(service, dockey)
     if service.manager.is_downloading(dockey):
@@ -147,7 +149,7 @@ def object_file(dockey: str, file_name: str, request: Request) -> Response:
         raise HTTPException(
             status_code=404,
             detail="The file does not exist (or is not part of a completed "
-                   "download on this server).",
+            "download on this server).",
         )
     size = path.stat().st_size
     headers = {
@@ -166,11 +168,11 @@ def object_file(dockey: str, file_name: str, request: Request) -> Response:
         headers["Content-Range"] = f"bytes {start}-{end}/{size}"
         return StreamingResponse(
             _slice(path, start, end - start + 1),
-            status_code=206, media_type="application/octet-stream",
+            status_code=206,
+            media_type="application/octet-stream",
             headers=headers,
         )
-    return FileResponse(path, media_type="application/octet-stream",
-                        headers=headers)
+    return FileResponse(path, media_type="application/octet-stream", headers=headers)
 
 
 def _parse_range(header: str, size: int) -> tuple[int | None, int]:

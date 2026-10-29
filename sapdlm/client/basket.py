@@ -105,8 +105,8 @@ class ObjectVersion:
 
 @dataclass
 class DownloadComponent:
-    name: str        # DOWNLOAD<n> key
-    url: str         # resource URL (absolute or relative)
+    name: str  # DOWNLOAD<n> key
+    url: str  # resource URL (absolute or relative)
     token: str = ""  # cookie value ("name=value" pair string, like the original)
 
 

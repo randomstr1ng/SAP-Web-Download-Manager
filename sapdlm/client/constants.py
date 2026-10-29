@@ -9,26 +9,27 @@ from sapdlm import DLM_VERSION
 
 __all__ = [
     "DLM_VERSION",
-    "GlobalStatus",
-    "BasketStatus",
-    "LocalStatus",
-    "FileStatus",
-    "VALID_DOWNLOAD_HOST_SUFFIXES",
     "MAX_HISTORY_ENTRIES",
-    "STATUS_NOT_STARTED",
-    "STATUS_DOWNLOADED_BASKET_UNSET",
     "STATUS_COMPLETE",
-    "STATUS_PARTIAL",
+    "STATUS_DOWNLOADED_BASKET_UNSET",
     "STATUS_IN_PROGRESS",
+    "STATUS_NOT_STARTED",
+    "STATUS_PARTIAL",
+    "VALID_DOWNLOAD_HOST_SUFFIXES",
+    "BasketStatus",
+    "FileStatus",
+    "GlobalStatus",
+    "LocalStatus",
 ]
+
 
 # BasketItem.GLOBALSTATUS_*
 class GlobalStatus:
     OK = 0
-    DELETED = 1          # "This object is no longer available."
-    NOT_AUTHORIZED = 2   # "You are not authorized to download selected object."
-    ERR_OTHER = 3        # item error text
-    SYSTEM_ERROR = 5     # "System error occurs. Try again later."
+    DELETED = 1  # "This object is no longer available."
+    NOT_AUTHORIZED = 2  # "You are not authorized to download selected object."
+    ERR_OTHER = 3  # item error text
+    SYSTEM_ERROR = 5  # "System error occurs. Try again later."
 
 
 # BasketItem.BASKETSTATUS_*
@@ -46,7 +47,7 @@ class BasketStatus:
 class LocalStatus:
     NOT_STARTED = 0
     PARTIAL = 1
-    DOWNLOADED = 2       # downloaded, basket status not set
+    DOWNLOADED = 2  # downloaded, basket status not set
     COMPLETE = 3
 
 

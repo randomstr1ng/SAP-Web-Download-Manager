@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import argparse
-import asyncio
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sapdlm.api.service import Service
 
 
-def _service_from_env() -> "Service":  # pragma: no cover - thin env wiring
+def _service_from_env() -> Service:  # pragma: no cover - thin env wiring
     from sapdlm.api.service import Service
 
     data_dir = Path(os.environ.get("DLM_DATA_DIR") or "data")
@@ -46,9 +49,9 @@ def main() -> None:
         description="SAP Download Manager (Python web rewrite)",
     )
     parser.add_argument(
-        "--auto", action="store_true",
-        help="One-shot automatic download of the whole basket, then exit "
-             "(original /a, /x parity)",
+        "--auto",
+        action="store_true",
+        help="One-shot automatic download of the whole basket, then exit (original /a, /x parity)",
     )
     parser.parse_args()
     args = parser.parse_args()

@@ -27,8 +27,9 @@ def test_metrics_endpoint(tmp_path, monkeypatch):
 
         configure(client)
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
 
         values = _parse(client.get("/metrics").text)
         assert values["sapdlm_downloads_total"] == 1

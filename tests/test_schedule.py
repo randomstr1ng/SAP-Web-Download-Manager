@@ -2,24 +2,21 @@
 
 from __future__ import annotations
 
-import json
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import httpx
-import pytest
 from fastapi.testclient import TestClient
 
 from sapdlm.api.app import create_app
 from sapdlm.api.service import Service
+from sapdlm.config import Settings, save_settings
 from sapdlm.credentials import CredentialStore
-from sapdlm.config import save_settings, Settings
 from tests.test_api import portal_handler
 
 
-def make_client(tmp_path: Path, monkeypatch, autostart=False,
-                pre_schedule=None) -> TestClient:
+def make_client(tmp_path: Path, monkeypatch, autostart=False, pre_schedule=None) -> TestClient:
     data_dir = tmp_path / "data"
     download_dir = tmp_path / "store"
     monkeypatch.setenv("DLM_DATA_DIR", str(data_dir))
@@ -29,7 +26,8 @@ def make_client(tmp_path: Path, monkeypatch, autostart=False,
 
     if autostart or pre_schedule:
         settings = Settings(
-            sap_url="https://launchpad.test", username="jane",
+            sap_url="https://launchpad.test",
+            username="jane",
             download_store=str(download_dir),
             autostart_download=autostart,
         )
@@ -41,7 +39,8 @@ def make_client(tmp_path: Path, monkeypatch, autostart=False,
 
     def service_factory(data_dir, download_dir, **kw):
         return Service(
-            data_dir=data_dir, download_dir=download_dir,
+            data_dir=data_dir,
+            download_dir=download_dir,
             http_client=httpx.Client(transport=transport),
             component_client_factory=lambda: httpx.Client(transport=transport),
         )
@@ -50,12 +49,12 @@ def make_client(tmp_path: Path, monkeypatch, autostart=False,
 
 
 def configure(client: TestClient) -> None:
-    client.put("/api/config", json={"sap_url": "https://launchpad.test",
-                                    "username": "jane"})
+    client.put("/api/config", json={"sap_url": "https://launchpad.test", "username": "jane"})
     client.put("/api/credentials", json={"sap_password": "s3cret"})
 
 
 # ------------------------------------------------------------------- validation
+
 
 def test_schedule_validation(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
@@ -89,6 +88,7 @@ def test_schedule_validation(tmp_path, monkeypatch):
 
 # ---------------------------------------------------------------------- firing
 
+
 def test_schedule_fires_download(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
         configure(client)
@@ -121,6 +121,7 @@ def test_missed_schedule_cleared_on_startup(tmp_path, monkeypatch):
 
 
 # -------------------------------------------------------------------- autostart
+
 
 def test_autostart_downloads_on_startup(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch, autostart=True) as client:

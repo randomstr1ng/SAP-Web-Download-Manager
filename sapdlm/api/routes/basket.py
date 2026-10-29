@@ -21,7 +21,7 @@ def _require_configured(service: Service) -> None:
         raise HTTPException(
             status_code=409,
             detail="Configuration incomplete. Provide SAP URL, credentials and "
-                   "a download store first.",
+            "a download store first.",
         )
 
 
@@ -46,8 +46,9 @@ async def refresh_basket(request: Request, background: BackgroundTasks) -> dict:
             service.tasks.finish(task_id)
         except RefreshCancelled:
             service.tasks.finish(task_id, state="cancelled")
-            service.events.publish({"type": "status", **service.status(),
-                                   "action": "Refresh canceled"})
+            service.events.publish(
+                {"type": "status", **service.status(), "action": "Refresh canceled"}
+            )
         except Exception as exc:  # noqa: BLE001 - reported to the client
             service.tasks.finish(task_id, str(exc))
             service.events.publish({"type": "error", "message": str(exc)})
@@ -69,7 +70,7 @@ async def remove_basket_item(dockey: str, request: Request) -> None:
     _require_configured(service)
     try:
         await asyncio.to_thread(service.remove_from_basket, dockey)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 

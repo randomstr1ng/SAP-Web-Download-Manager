@@ -10,17 +10,18 @@ import asyncio
 import logging
 import threading
 import uuid
-import httpx
-from concurrent.futures import ThreadPoolExecutor
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 from sapdlm import DLM_VERSION, __version__
-from sapdlm.client.basket import BasketContent, BasketItem
+from sapdlm.client.basket import BasketContent
 from sapdlm.client.connection import ConnectionConfig
-from sapdlm.client.constants import FileStatus, LocalStatus
+from sapdlm.client.constants import FileStatus
 from sapdlm.client.download_client import DownloadClient
 from sapdlm.config import Settings, load_settings, save_settings
 from sapdlm.credentials import CredentialStore
@@ -67,7 +68,7 @@ class EventBus:
         for ws in list(self._clients):
             try:
                 await ws.send_json(event)
-            except Exception:
+            except Exception:  # noqa: BLE001 - a dead socket must not break the fan-out
                 dead.append(ws)
         for ws in dead:
             self.unsubscribe(ws)
@@ -84,14 +85,16 @@ class TaskRegistry:
         task_id = uuid.uuid4().hex[:12]
         with self._lock:
             self._tasks[task_id] = {
-                "id": task_id, "kind": kind, "detail": detail,
-                "state": "running", "error": None,
+                "id": task_id,
+                "kind": kind,
+                "detail": detail,
+                "state": "running",
+                "error": None,
                 "created": datetime.now(UTC).isoformat(timespec="seconds"),
             }
         return task_id
 
-    def finish(self, task_id: str, error: str | None = None,
-               state: str | None = None) -> None:
+    def finish(self, task_id: str, error: str | None = None, state: str | None = None) -> None:
         with self._lock:
             if task_id in self._tasks:
                 if state is None:
@@ -130,7 +133,9 @@ class Service:
         self.metrics = None
         self._component_client_factory = component_client_factory
         self.manager = DownloadManager(
-            self.store, self._build_client(), self.download_dir,
+            self.store,
+            self._build_client(),
+            self.download_dir,
             use_subdir=self.settings.create_subdir,
             save_description_files=self.settings.save_description,
             component_client_factory=component_client_factory,
@@ -145,9 +150,7 @@ class Service:
 
     def _apply_log_level(self) -> None:
         """settings.trace parity: verbose logging for the sapdlm loggers."""
-        logging.getLogger("sapdlm").setLevel(
-            logging.DEBUG if self.settings.trace else logging.INFO
-        )
+        logging.getLogger("sapdlm").setLevel(logging.DEBUG if self.settings.trace else logging.INFO)
 
     # ------------------------------------------------------------------ factories
 
@@ -196,7 +199,7 @@ class Service:
         client = self.manager.client
         try:
             server = httpx.URL(self.settings.sap_url).host or ""
-        except Exception:
+        except Exception:  # noqa: BLE001 - any URL parse failure just hides the host
             server = ""
         return {
             "status": "ok",
@@ -208,8 +211,7 @@ class Service:
             "busy": client.busy,
             "download_dir": self.settings.download_store,
             "downloading": self.manager.downloading_keys,
-            "watching": bool(self.watcher is not None
-                             and self.watcher.status()["active"]),
+            "watching": bool(self.watcher is not None and self.watcher.status()["active"]),
         }
 
     # ------------------------------------------------------------------- basket
@@ -225,9 +227,7 @@ class Service:
             self._refresh_stop = None
         self.basket = content
         for item in content.items.values():
-            record = self.store.get_object(item.dockey) or ObjectRecord(
-                dockey=item.dockey
-            )
+            record = self.store.get_object(item.dockey) or ObjectRecord(dockey=item.dockey)
             record.text = item.text
             record.doctype = item.doc_type
             record.size_kb = item.size_kb
@@ -247,8 +247,13 @@ class Service:
     def basket_view(self) -> dict:
         """Current basket merged with local status."""
         if self.basket is None:
-            return {"refreshed": False, "full_name": "", "items": [],
-                    "upgrade": None, "user_ip": ""}
+            return {
+                "refreshed": False,
+                "full_name": "",
+                "items": [],
+                "upgrade": None,
+                "user_ip": "",
+            }
         items = []
         for item in self.basket.items.values():
             record = self.store.get_object(item.dockey)
@@ -256,35 +261,36 @@ class Service:
             # Technical file names are known after a download attempt (from
             # DOWNLOAD_START2); before that only the dockey distinguishes
             # items with identical description texts.
-            local_files = [
-                c.file_name for c in self.store.components(item.dockey)
-                if c.file_name
-            ]
-            items.append({
-                "dockey": item.dockey,
-                "text": item.text,
-                "doc_type": item.doc_type,
-                "size_kb": item.size_kb,
-                "size_text": item.size_text,
-                "reg_date": item.reg_date,
-                "reg_time": item.reg_time,
-                "global_status": item.global_status,
-                "basket_status": item.basket_status,
-                "local_status": local_status,
-                "local_files": local_files,
-                "status_text": item.status_text(
-                    local_status,
-                    downloading=self.manager.is_downloading(item.dockey),
-                ),
-                "downloading": self.manager.is_downloading(item.dockey),
-            })
+            local_files = [c.file_name for c in self.store.components(item.dockey) if c.file_name]
+            items.append(
+                {
+                    "dockey": item.dockey,
+                    "text": item.text,
+                    "doc_type": item.doc_type,
+                    "size_kb": item.size_kb,
+                    "size_text": item.size_text,
+                    "reg_date": item.reg_date,
+                    "reg_time": item.reg_time,
+                    "global_status": item.global_status,
+                    "basket_status": item.basket_status,
+                    "local_status": local_status,
+                    "local_files": local_files,
+                    "status_text": item.status_text(
+                        local_status,
+                        downloading=self.manager.is_downloading(item.dockey),
+                    ),
+                    "downloading": self.manager.is_downloading(item.dockey),
+                }
+            )
         return {
             "refreshed": True,
             "full_name": self.basket.full_name,
             "user_ip": self.basket.user_ip,
-            "upgrade": (self.basket.upgrade.__dict__ if
-                        (self.basket.upgrade.version or self.basket.upgrade.url)
-                        else None),
+            "upgrade": (
+                self.basket.upgrade.__dict__
+                if (self.basket.upgrade.version or self.basket.upgrade.url)
+                else None
+            ),
             "items": items,
         }
 
@@ -306,9 +312,9 @@ class Service:
             return [r.dockey for r in self.store.list_objects()]
         return list(keys or [])
 
-    def run_download(self, keys: list[str],
-                     progress: Callable[[ComponentProgress], None] | None = None
-                     ) -> None:
+    def run_download(
+        self, keys: list[str], progress: Callable[[ComponentProgress], None] | None = None
+    ) -> None:
         """Process the given objects, up to max_concurrent_objects in parallel.
         Tracks metrics and sends webhook notifications per object outcome."""
         workers = max(1, self.settings.max_concurrent_objects)
@@ -317,25 +323,21 @@ class Service:
                 self._run_one(dockey, progress)
             return
         with ThreadPoolExecutor(max_workers=min(workers, len(keys))) as pool:
-            futures = [pool.submit(self._run_one, dockey, progress)
-                       for dockey in keys]
+            futures = [pool.submit(self._run_one, dockey, progress) for dockey in keys]
             for future in futures:
                 future.result()
 
-    def _run_one(self, dockey: str,
-                 progress: Callable[[ComponentProgress], None] | None) -> None:
+    def _run_one(self, dockey: str, progress: Callable[[ComponentProgress], None] | None) -> None:
         """Download a single object (metrics + webhook on the outcome)."""
-        self.events.publish({"type": "status", **self.status(),
-                            "action": f"Downloading {dockey}"})
+        self.events.publish({"type": "status", **self.status(), "action": f"Downloading {dockey}"})
         try:
-            done = self.manager.download_object(
-                dockey, progress=self._progress_publisher(progress))
+            done = self.manager.download_object(dockey, progress=self._progress_publisher(progress))
             if done:
                 metrics = getattr(self, "metrics", None)
                 if metrics is not None:
                     metrics.track_object_finished(dockey, success=True)
                 self._send_webhook("completed", dockey)
-        except Exception as exc:  # engine aborts on this object, continue
+        except Exception as exc:  # noqa: BLE001 - engine aborts on this object, continue
             metrics = getattr(self, "metrics", None)
             if metrics is not None:
                 metrics.track_object_finished(dockey, success=False)
@@ -376,8 +378,7 @@ class Service:
         if secret:
             headers["X-Webhook-Secret"] = secret
         try:
-            self._webhook_client.post(url, json=payload, headers=headers,
-                                      timeout=5)
+            self._webhook_client.post(url, json=payload, headers=headers, timeout=5)
         except Exception as exc:  # noqa: BLE001 - must never break downloads
             logger.warning("webhook delivery to %s failed: %s", url, exc)
 
@@ -399,7 +400,7 @@ class Service:
             content = self.manager.client.check_basket_content()
             name = content.full_name or "anonymous"
             return True, f"Connected. Welcome, {name} ({len(content.items)} item(s) in basket)."
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - any failure becomes user-facing text
             return False, str(exc)
 
     # ---------------------------------------------------------------- settings
@@ -414,8 +415,7 @@ class Service:
             if isinstance(value, str):
                 current[key] = value.strip()
         self.settings = Settings.from_dict(current)
-        self.settings.max_concurrent_objects = max(
-            1, self.settings.max_concurrent_objects)
+        self.settings.max_concurrent_objects = max(1, self.settings.max_concurrent_objects)
         self.settings.watch_interval = max(1, self.settings.watch_interval)
         save_settings(self.data_dir, self.settings)
         self.reload_engine()
@@ -434,8 +434,7 @@ class Service:
 
     def object_protocol(self, dockey: str) -> list[dict]:
         return [
-            {"ts": p.ts, "type": p.type, "message": p.message}
-            for p in self.store.protocol(dockey)
+            {"ts": p.ts, "type": p.type, "message": p.message} for p in self.store.protocol(dockey)
         ]
 
     def object_detail(self, dockey: str) -> dict:
@@ -446,16 +445,21 @@ class Service:
             raise KeyError(dockey)
 
         status_texts = {
-            0: "not started", 1: "in progress", 2: "completed", 3: "completed",
+            0: "not started",
+            1: "in progress",
+            2: "completed",
+            3: "completed",
         }
         files = []
         for comp in self.store.components(dockey):
-            files.append({
-                "file_name": comp.file_name,
-                "local_file": comp.local_file_name,
-                "bytes_committed": comp.bytes_committed,
-                "status": status_texts.get(comp.file_status, "unknown"),
-            })
+            files.append(
+                {
+                    "file_name": comp.file_name,
+                    "local_file": comp.local_file_name,
+                    "bytes_committed": comp.bytes_committed,
+                    "status": status_texts.get(comp.file_status, "unknown"),
+                }
+            )
 
         description = ""
         if record.desc_file:
@@ -482,8 +486,13 @@ class Service:
 
     def history(self) -> list[dict]:
         return [
-            {"dockey": h.dockey, "text": h.text, "doc_type": h.doctype,
-             "version": h.version, "date": h.date}
+            {
+                "dockey": h.dockey,
+                "text": h.text,
+                "doc_type": h.doctype,
+                "version": h.version,
+                "date": h.date,
+            }
             for h in self.store.history()
         ]
 
@@ -495,8 +504,9 @@ class Service:
         for comp in self.store.components(dockey):
             if comp.file_status != FileStatus.COMPLETED or not comp.file_name:
                 continue
-            files.append({"file_name": comp.file_name,
-                          "size": self._local_size(comp.local_file_name)})
+            files.append(
+                {"file_name": comp.file_name, "size": self._local_size(comp.local_file_name)}
+            )
         return files
 
     def resolve_local_file(self, dockey: str, file_name: str) -> Path | None:

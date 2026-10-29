@@ -62,8 +62,7 @@ def create_mcp_server(service_getter) -> FastMCP:
     # ---------------------------------------------------------------- downloads
 
     @mcp.tool
-    def start_download(keys: list[str] | None = None,
-                       mode: str = "selected") -> dict:
+    def start_download(keys: list[str] | None = None, mode: str = "selected") -> dict:
         """Start downloading objects (by keys) or the whole basket (mode=all).
         Returns a task id; monitor via get_status / get_download_protocol."""
         service = svc()
@@ -85,8 +84,7 @@ def create_mcp_server(service_getter) -> FastMCP:
         bytes). Returns the new task id."""
         service = svc()
         if service.manager.is_downloading(dockey):
-            return {"dockey": dockey, "resumed": False,
-                    "already_downloading": True}
+            return {"dockey": dockey, "resumed": False, "already_downloading": True}
         task_id = service.tasks.create("download", detail=dockey)
         _spawn(service, task_id, [dockey])
         return {"dockey": dockey, "resumed": True, "task_id": task_id}
@@ -155,7 +153,7 @@ def create_mcp_server(service_getter) -> FastMCP:
     def _spawn(service: Service, task_id: str, keys: list[str]) -> None:
         import asyncio
 
-        loop = service.events._loop  # noqa: SLF001 - same-package wiring
+        loop = service.events._loop
         if loop is None or loop.is_closed():
             service.tasks.finish(task_id, "no running event loop")
             return

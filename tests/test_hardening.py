@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import httpx
-import pytest
 
 from sapdlm.client.basket import DownloadComponent, DownloadStart
 from sapdlm.client.connection import ConnectionConfig
@@ -28,8 +25,7 @@ class StartOnlyClient(DownloadClient):
     def start_download(self, dockey):
         return DownloadStart(
             dockey=dockey,
-            components=[DownloadComponent(
-                name="DOWNLOAD0_../../etc/evil.sar", url=COMP_URL)],
+            components=[DownloadComponent(name="DOWNLOAD0_../../etc/evil.sar", url=COMP_URL)],
         )
 
     def end_download(self, dockey):
@@ -46,8 +42,7 @@ def test_sanitize_file_name():
 
 
 def test_traversal_confined_to_store(tmp_path):
-    client = StartOnlyClient(
-        ConnectionConfig(sap_url="https://portal", username="u", password="p"))
+    client = StartOnlyClient(ConnectionConfig(sap_url="https://portal", username="u", password="p"))
     store = StateStore(tmp_path / "app.db")
     store.upsert_object(ObjectRecord(dockey="K1", text="t"))
 
@@ -56,9 +51,10 @@ def test_traversal_confined_to_store(tmp_path):
         return httpx.Response(200, content=b"DATA")
 
     manager = DownloadManager(
-        store, client, tmp_path / "store",
-        component_client_factory=lambda: httpx.Client(
-            transport=httpx.MockTransport(handler)),
+        store,
+        client,
+        tmp_path / "store",
+        component_client_factory=lambda: httpx.Client(transport=httpx.MockTransport(handler)),
     )
     assert manager.download_object("K1") is True
     # File landed inside the store, nothing escaped it
@@ -69,7 +65,10 @@ def test_traversal_confined_to_store(tmp_path):
 
 def test_description_traversal_confined(tmp_path):
     target = save_description(
-        tmp_path, "K1", ["line"], use_subdir=False,
+        tmp_path,
+        "K1",
+        ["line"],
+        use_subdir=False,
         first_component_file="../../../etc/passwd",
     )
     # basename only: the file is written inside the store directory

@@ -25,7 +25,7 @@ import httpx
 
 from sapdlm.engine.state import ComponentRecord, StateStore
 
-FLUSH_BYTES = 500_000      # 50 buffers x 10 KB in the original
+FLUSH_BYTES = 500_000  # 50 buffers x 10 KB in the original
 CHUNK = 65_536
 
 
@@ -80,11 +80,13 @@ class ComponentDownloader:
         if comp.token:
             headers["Cookie"] = comp.token
 
-        start_offset = comp.bytes_committed if comp.bytes_committed > 0 else 0
+        start_offset = max(0, comp.bytes_committed)
         response = self._get(comp.resource_url, headers)
         if start_offset > 0:
             total_hint = response.content_length()
-            headers["Range"] = f"bytes={start_offset}-{total_hint if total_hint else ''}".rstrip("-")
+            headers["Range"] = f"bytes={start_offset}-{total_hint if total_hint else ''}".rstrip(
+                "-"
+            )
             response = self._get(comp.resource_url, headers)
 
         total_size = response.content_length()
@@ -119,9 +121,7 @@ class ComponentDownloader:
             comp.local_file_name = part_path
         else:
             part_path = comp.local_file_name
-            final_path = (
-                Path(part_path[:-5]) if part_path.endswith(".part") else Path(part_path)
-            )
+            final_path = Path(part_path[:-5]) if part_path.endswith(".part") else Path(part_path)
 
         comp.file_status = 1
         self.store.patch_component(comp, file_status=1)
@@ -147,20 +147,24 @@ class ComponentDownloader:
                     if fh.tell() - last_checkpoint >= FLUSH_BYTES:
                         fh.flush()
                         last_checkpoint = fh.tell()
-                        self.store.patch_component(
-                            comp, bytes_committed=bytes_committed
-                        )
+                        self.store.patch_component(comp, bytes_committed=bytes_committed)
                     now = time.monotonic()
                     if progress and now - last_report >= 1.0:
                         last_report = now
                         elapsed = max(now - started, 1e-6)
-                        progress(ComponentProgress(
-                            dockey=dockey, seq=comp.seq, file_name=comp.file_name,
-                            bytes_committed=bytes_committed, total_size=total_size,
-                            speed_bps=(bytes_committed - start_offset) / elapsed,
-                            source_host=_host(comp.resource_url),
-                            comp_nr=0, comp_total=0,
-                        ))
+                        progress(
+                            ComponentProgress(
+                                dockey=dockey,
+                                seq=comp.seq,
+                                file_name=comp.file_name,
+                                bytes_committed=bytes_committed,
+                                total_size=total_size,
+                                speed_bps=(bytes_committed - start_offset) / elapsed,
+                                source_host=_host(comp.resource_url),
+                                comp_nr=0,
+                                comp_total=0,
+                            )
+                        )
         finally:
             response.close()
 
@@ -183,8 +187,11 @@ class ComponentDownloader:
         Path(part_path).rename(candidate)
 
         self.store.patch_component(
-            comp, local_file_name=str(candidate), file_name=candidate.name,
-            bytes_committed=bytes_committed, file_status=2,
+            comp,
+            local_file_name=str(candidate),
+            file_name=candidate.name,
+            bytes_committed=bytes_committed,
+            file_status=2,
         )
         comp.local_file_name = str(candidate)
         comp.file_name = candidate.name
@@ -199,9 +206,7 @@ class ComponentDownloader:
         try:
             response = self.client.get(url, headers=headers)
         except httpx.HTTPError as exc:
-            raise ComponentDownloadError(
-                f"Unable to read from the input stream: {exc}"
-            ) from exc
+            raise ComponentDownloadError(f"Unable to read from the input stream: {exc}") from exc
         return _StreamedResponse(response)
 
     def _delete_local(self, comp: ComponentRecord) -> None:
@@ -209,9 +214,7 @@ class ComponentDownloader:
             path = Path(comp.local_file_name)
             if path.exists():
                 path.unlink()
-        self.store.patch_component(
-            comp, local_file_name="", bytes_committed=0, file_status=0
-        )
+        self.store.patch_component(comp, local_file_name="", bytes_committed=0, file_status=0)
         comp.local_file_name = ""
         comp.bytes_committed = 0
         comp.file_status = 0
@@ -220,7 +223,7 @@ class ComponentDownloader:
 def _host(url: str) -> str:
     try:
         return httpx.URL(url).host.lower()
-    except Exception:
+    except Exception:  # noqa: BLE001 - host allowlist check, empty host never matches
         return ""
 
 

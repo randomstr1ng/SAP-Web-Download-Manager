@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import time
 from pathlib import Path
 
 import httpx
@@ -15,7 +14,7 @@ from sapdlm.client.basket import (
     ObjectVersion,
 )
 from sapdlm.client.connection import ConnectionConfig
-from sapdlm.client.constants import FileStatus, LocalStatus
+from sapdlm.client.constants import LocalStatus
 from sapdlm.client.download_client import DownloadClient
 from sapdlm.engine.manager import DownloadAbort, DownloadManager
 from sapdlm.engine.state import ObjectRecord, StateStore
@@ -31,8 +30,7 @@ class RetryPortalClient(DownloadClient):
     def start_download(self, dockey):
         return DownloadStart(
             dockey=dockey,
-            components=[DownloadComponent(name="DOWNLOAD0_comp.bin",
-                                          url=COMP_URL, token="t=1")],
+            components=[DownloadComponent(name="DOWNLOAD0_comp.bin", url=COMP_URL, token="t=1")],
         )
 
     def end_download(self, dockey):
@@ -49,8 +47,9 @@ def flaky_handler_factory(fail_times: int):
             return httpx.Response(503)
         if request.headers.get("Range"):
             return httpx.Response(
-                206, content=BODY,
-                headers={"Content-Range": f"bytes 0-{len(BODY)-1}/{len(BODY)}"},
+                206,
+                content=BODY,
+                headers={"Content-Range": f"bytes 0-{len(BODY) - 1}/{len(BODY)}"},
             )
         return httpx.Response(200, content=BODY)
 
@@ -62,9 +61,10 @@ def make_manager(tmp_path: Path, handler, retries: int) -> DownloadManager:
     store = StateStore(tmp_path / "app.db")
     store.upsert_object(ObjectRecord(dockey="K1", text="t"))
     return DownloadManager(
-        store, RetryPortalClient(config), tmp_path / "store",
-        component_client_factory=lambda: httpx.Client(
-            transport=httpx.MockTransport(handler)),
+        store,
+        RetryPortalClient(config),
+        tmp_path / "store",
+        component_client_factory=lambda: httpx.Client(transport=httpx.MockTransport(handler)),
         component_retries=retries,
     )
 

@@ -24,28 +24,40 @@ class Portal:
         if path.endswith("/DownloadContentSet"):
             mode = params.get("_MODE")
             if mode == "BASKET_CONTENT":
-                body = {"d": {"results": [
-                    {"Name": "OBJID",
-                     "Value": f"{k}|SAR|Object {k}|100|1|20241129120000|0"}
-                    for k in self.items
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {"Name": "OBJID", "Value": f"{k}|SAR|Object {k}|100|1|20241129120000|0"}
+                            for k in self.items
+                        ]
+                    }
+                }
             elif mode == "OBJECT_VERSION":
-                body = {"d": {"results": [
-                    {"Name": "GLOBALSTATUS", "Value": "0"},
-                    {"Name": "INFOHDVERSION", "Value": "17"},
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {"Name": "GLOBALSTATUS", "Value": "0"},
+                            {"Name": "INFOHDVERSION", "Value": "17"},
+                        ]
+                    }
+                }
             elif mode == "DOWNLOAD_START2":
                 dockey = params.get("OBJID")
-                body = {"d": {"results": [
-                    {"Name": "DOCKEY", "Value": dockey},
-                    {"Name": f"DOWNLOAD0_{dockey}.bin",
-                     "Value": f"https://download.sap.com/{dockey}.bin"},
-                    {"Name": "TOKEN_SAPSSO", "Value": "tok"},
-                    {"Name": "DESCRIPTION", "Value": f"Object {dockey}"},
-                ]}}
+                body = {
+                    "d": {
+                        "results": [
+                            {"Name": "DOCKEY", "Value": dockey},
+                            {
+                                "Name": f"DOWNLOAD0_{dockey}.bin",
+                                "Value": f"https://download.sap.com/{dockey}.bin",
+                            },
+                            {"Name": "TOKEN_SAPSSO", "Value": "tok"},
+                            {"Name": "DESCRIPTION", "Value": f"Object {dockey}"},
+                        ]
+                    }
+                }
             elif mode == "DOWNLOAD_END":
-                body = {"d": {"results": [{"Name": "BASKETSTATUS",
-                                          "Value": "4"}]}}
+                body = {"d": {"results": [{"Name": "BASKETSTATUS", "Value": "4"}]}}
             elif mode == "OBJDEL":
                 body = {"d": {"results": []}}
             else:
@@ -75,15 +87,17 @@ def make_client(tmp_path: Path, monkeypatch, portal: Portal) -> TestClient:
 
 
 def configure(client: TestClient, **extra) -> None:
-    resp = client.put("/api/config", json={
-        "sap_url": "https://launchpad.test",
-        "username": "jane",
-        "download_store": None,
-        **extra,
-    })
+    resp = client.put(
+        "/api/config",
+        json={
+            "sap_url": "https://launchpad.test",
+            "username": "jane",
+            "download_store": None,
+            **extra,
+        },
+    )
     assert resp.status_code == 200
-    assert client.put("/api/credentials",
-                      json={"sap_password": "s3cret"}).status_code == 200
+    assert client.put("/api/credentials", json={"sap_password": "s3cret"}).status_code == 200
 
 
 def _status(client: TestClient, dockey: str) -> int | None:

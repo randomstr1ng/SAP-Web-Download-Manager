@@ -10,9 +10,8 @@ from enum import Enum
 
 from sapdlm.client.basket import BasketContent, DownloadEnd, DownloadStart, ObjectVersion
 from sapdlm.client.connection import (
-    RefreshCancelled,
-    AuthenticationConfigError,
     ConnectionConfig,
+    RefreshCancelled,
     SapConnection,
     SapIOError,
 )
@@ -42,8 +41,7 @@ class ItemNotFoundError(Exception):
 class DownloadClient:
     """Orchestrates portal communication (DownloadClient parity)."""
 
-    def __init__(self, config: ConnectionConfig | None = None,
-                 http_client=None):
+    def __init__(self, config: ConnectionConfig | None = None, http_client=None):
         self.config = config
         self._http_client = http_client  # optional httpx.Client (tests / DI)
         self.busy = False
@@ -72,8 +70,7 @@ class DownloadClient:
         try:
             self.config.validate_auth()
             connection = self._connection()
-            response = connection.get_with_retries(
-                connection.endpoints.basket_content(), stop=stop)
+            response = connection.get_with_retries(connection.endpoints.basket_content(), stop=stop)
             self.connected = True
             self.basket = parse_basket_content(response.text, connection.style)
             return self.basket

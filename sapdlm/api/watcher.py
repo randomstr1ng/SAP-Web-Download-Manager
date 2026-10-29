@@ -47,8 +47,9 @@ class Watcher:
             return
         if self._loop is None:
             return  # not started yet (pre-lifespan)
-        logger.info("Watch mode enabled (every %d minute(s)).",
-                    self.service.settings.watch_interval)
+        logger.info(
+            "Watch mode enabled (every %d minute(s)).", self.service.settings.watch_interval
+        )
         # update_settings runs in a worker thread: schedule onto the app loop
         self._task = asyncio.run_coroutine_threadsafe(self._run(), self._loop)
 

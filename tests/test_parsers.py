@@ -100,6 +100,7 @@ def test_marketplace_attribute_without_item():
 
 # ------------------------------------------------------------------- object version
 
+
 def test_object_version_portal():
     body = '{"d":{"results":[{"Name":"GLOBALSTATUS","Value":"0"},{"Name":"INFOHDVERSION","Value":"17"}]}}'
     info = parse_object_version(body, PORTAL)
@@ -163,6 +164,7 @@ def test_download_start_marketplace():
 
 # -------------------------------------------------------------------- download end
 
+
 def test_download_end_portal_ok():
     body = '{"d":{"results":[{"Name":"BASKETSTATUS","Value":"4"}]}}'
     assert parse_download_end(body, PORTAL).error is False
@@ -181,6 +183,7 @@ def test_download_end_marketplace():
 
 
 # ------------------------------------------------------------------------ allowlist
+
 
 @pytest.mark.parametrize(
     ("url", "expected"),

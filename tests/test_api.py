@@ -6,19 +6,16 @@ The portal + file servers are simulated with a single httpx MockTransport.
 from __future__ import annotations
 
 import json
-import os
 import time
 from pathlib import Path
 
 import httpx
-import pytest
 from fastapi.testclient import TestClient
 
 from sapdlm.api.app import create_app
 from sapdlm.api.service import Service
 from sapdlm.credentials import MASK
-
-from tests.portal_stub import COMP_BODY, portal_handler  # noqa: F401 (shared stub)
+from tests.portal_stub import COMP_BODY, portal_handler
 
 
 def make_client(tmp_path: Path, monkeypatch, admin=None) -> TestClient:
@@ -57,17 +54,21 @@ def wait_task(client: TestClient, task_id: str, timeout=10.0) -> dict:
 
 
 def configure(client: TestClient) -> None:
-    resp = client.put("/api/config", json={
-        "sap_url": "https://launchpad.test",
-        "username": "jane",
-        "download_store": None,  # keep the service default (tmp store)
-    })
+    resp = client.put(
+        "/api/config",
+        json={
+            "sap_url": "https://launchpad.test",
+            "username": "jane",
+            "download_store": None,  # keep the service default (tmp store)
+        },
+    )
     assert resp.status_code == 200
     resp = client.put("/api/credentials", json={"sap_password": "s3cret"})
     assert resp.status_code == 200
 
 
 # ------------------------------------------------------------------ basic routes
+
 
 def test_status_health_state(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
@@ -85,6 +86,7 @@ def test_refresh_without_configuration_is_409(tmp_path, monkeypatch):
 
 
 # -------------------------------------------------------------- config + secrets
+
 
 def test_config_and_credential_flow(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
@@ -119,12 +121,11 @@ def test_env_override_beats_store(tmp_path, monkeypatch):
         configure(client)
         service = client.app.state.service
         assert service.connection_config().password == "env-wins"
-        assert "env-wins" not in (
-            tmp_path / "data" / "credentials.json"
-        ).read_text()
+        assert "env-wins" not in (tmp_path / "data" / "credentials.json").read_text()
 
 
 # ------------------------------------------------------------- basket + download
+
 
 def test_basket_refresh_flow(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
@@ -175,9 +176,11 @@ def test_delete_local_data(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
         configure(client)
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"],
-                  timeout=20)
+        wait_task(
+            client,
+            client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"],
+            timeout=20,
+        )
         assert (tmp_path / "store" / "comp.bin").exists()
 
         response = client.delete("/api/downloads/K1/local")
@@ -213,26 +216,25 @@ def test_unknown_object_404(tmp_path, monkeypatch):
 
 # ------------------------------------------------------------------------ auth
 
+
 def test_admin_auth(tmp_path, monkeypatch):
-    with make_client(tmp_path, monkeypatch=monkeypatch,
-                     admin=("admin", "pw123")) as client:
-        assert client.put("/api/config", json={"sap_url": "x"}
-                          ).status_code == 401
+    with make_client(tmp_path, monkeypatch=monkeypatch, admin=("admin", "pw123")) as client:
+        assert client.put("/api/config", json={"sap_url": "x"}).status_code == 401
         assert client.get("/api/status").status_code == 200  # health stays open
 
         client.auth = ("admin", "pw123")
-        response = client.put("/api/config", json={"sap_url": "https://launchpad.test",
-                                                  "username": "jane"})
+        response = client.put(
+            "/api/config", json={"sap_url": "https://launchpad.test", "username": "jane"}
+        )
         assert response.status_code == 200
         assert client.get("/api/basket").status_code == 200
 
 
 def test_ws_hello(tmp_path, monkeypatch):
-    with make_client(tmp_path, monkeypatch) as client:
-        with client.websocket_connect("/ws") as ws:
-            hello = ws.receive_json()
-            assert hello["type"] == "hello"
-            assert hello["status"]["app_version"]
+    with make_client(tmp_path, monkeypatch) as client, client.websocket_connect("/ws") as ws:
+        hello = ws.receive_json()
+        assert hello["type"] == "hello"
+        assert hello["status"]["app_version"]
 
 
 def test_empty_credential_put_never_wipes(tmp_path, monkeypatch):
@@ -261,8 +263,11 @@ def test_settings_save_preserves_connected_state(tmp_path, monkeypatch):
         assert state["connected"] is True, "engine reload must keep connection state"
         service = client.app.state.service
         assert service.manager.use_subdir is True
-        assert service.manager.client.config.create_subdir if hasattr(
-            service.manager.client.config, "create_subdir") else True
+        assert (
+            service.manager.client.config.create_subdir
+            if hasattr(service.manager.client.config, "create_subdir")
+            else True
+        )
 
 
 def test_settings_strips_whitespace(tmp_path, monkeypatch):
@@ -270,12 +275,15 @@ def test_settings_strips_whitespace(tmp_path, monkeypatch):
     auth with a confusing 401 PWD_WRONG. All text settings are stored trimmed
     and trimmed again when used."""
     with make_client(tmp_path, monkeypatch=monkeypatch) as client:
-        resp = client.put("/api/config", json={
-            "sap_url": "  https://launchpad.test  ",
-            "username": " S0027638133 ",
-            "download_store": "  /tmp/store-with-space  ",
-            "proxy_host": " proxy.internal ",
-        })
+        resp = client.put(
+            "/api/config",
+            json={
+                "sap_url": "  https://launchpad.test  ",
+                "username": " S0027638133 ",
+                "download_store": "  /tmp/store-with-space  ",
+                "proxy_host": " proxy.internal ",
+            },
+        )
         assert resp.status_code == 200
         config = resp.json()
         assert config["username"] == "S0027638133"
@@ -290,6 +298,7 @@ def test_settings_strips_whitespace(tmp_path, monkeypatch):
         assert conn.proxy_host == "proxy.internal"
         # persisted file is clean too
         import json as _json
+
         stored = _json.loads((tmp_path / "data" / "config.json").read_text())
         assert stored["username"] == "S0027638133"
 
@@ -298,8 +307,9 @@ def test_object_detail_endpoint(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch=monkeypatch) as client:
         configure(client)
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
 
         detail = client.get("/api/objects/K1").json()
         assert detail["dockey"] == "K1"
@@ -324,18 +334,20 @@ def test_basket_items_include_local_files(tmp_path, monkeypatch):
         basket = client.get("/api/basket").json()
         assert basket["items"][0]["local_files"] == []
 
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
         basket = client.get("/api/basket").json()
         assert basket["items"][0]["local_files"] == ["comp.bin"]
-
 
         assert client.post("/api/basket/refresh/cancel").json()["cancelled"] is False
 
 
 def _mk_from_factory(factory):
-    from sapdlm.api.app import create_app
     from fastapi.testclient import TestClient
+
+    from sapdlm.api.app import create_app
+
     return TestClient(create_app(service_factory=factory))
 
 
@@ -350,6 +362,7 @@ def test_refresh_cancelable(tmp_path, monkeypatch):
     import time as _t
 
     import httpx
+
     from sapdlm.client.connection import RefreshCancelled
     from sapdlm.config import Settings, save_settings
     from sapdlm.credentials import CredentialStore
@@ -366,15 +379,22 @@ def test_refresh_cancelable(tmp_path, monkeypatch):
     transport = httpx.MockTransport(flaky_refresh)
     data_dir = tmp_path / "data"
     data_dir.mkdir(parents=True)
-    save_settings(data_dir, Settings(
-        sap_url="https://launchpad.test", username="jane",
-        download_store=str(tmp_path / "store")))
+    save_settings(
+        data_dir,
+        Settings(
+            sap_url="https://launchpad.test",
+            username="jane",
+            download_store=str(tmp_path / "store"),
+        ),
+    )
     CredentialStore(data_dir).set("sap_password", "s3cret")
 
-    service = Service(data_dir=data_dir, download_dir=tmp_path / "store",
-                      http_client=httpx.Client(transport=transport),
-                      component_client_factory=lambda: httpx.Client(
-                          transport=transport))
+    service = Service(
+        data_dir=data_dir,
+        download_dir=tmp_path / "store",
+        http_client=httpx.Client(transport=transport),
+        component_client_factory=lambda: httpx.Client(transport=transport),
+    )
 
     stop = threading.Event()
     result = {}

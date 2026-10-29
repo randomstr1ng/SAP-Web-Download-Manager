@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Headless UI smoke test (Playwright + Chromium).
 
 Exercises the flows that broke most often during development: app bootstrap
@@ -27,8 +28,7 @@ SHOT_DIR = os.environ.get("UI_SMOKE_SHOT_DIR", "/tmp")
 
 async def main() -> int:
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            executable_path=CHROMIUM_PATH, args=["--no-sandbox"])
+        browser = await p.chromium.launch(executable_path=CHROMIUM_PATH, args=["--no-sandbox"])
         page = await browser.new_page(viewport={"width": 1400, "height": 900})
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
@@ -50,12 +50,10 @@ async def main() -> int:
         await page.wait_for_timeout(1200)
 
         # theme toggle on basket page
-        theme_before = await page.evaluate(
-            "sap.ui.getCore().getConfiguration().getTheme()")
+        theme_before = await page.evaluate("sap.ui.getCore().getConfiguration().getTheme()")
         await page.locator('button[id*="btnTheme"]').first.click()
         await page.wait_for_timeout(2000)
-        theme_after = await page.evaluate(
-            "sap.ui.getCore().getConfiguration().getTheme()")
+        theme_after = await page.evaluate("sap.ui.getCore().getConfiguration().getTheme()")
         await page.screenshot(path=f"{SHOT_DIR}/ui_dark.png")
         await browser.close()
 

@@ -1,8 +1,8 @@
 """FastAPI application: routes, lifespan wiring, auth, static UI."""
+
 from __future__ import annotations
 
 import asyncio
-import contextlib
 import logging
 import os
 import secrets
@@ -99,22 +99,19 @@ def create_app(service_factory=None) -> FastAPI:
 
     from sapdlm.api.mcp import create_mcp_server
 
-    mcp_server = create_mcp_server(
-        lambda: _mcp_holder["app"].state.service)
+    mcp_server = create_mcp_server(lambda: _mcp_holder["app"].state.service)
     mcp_http = mcp_server.http_app(path="/mcp")
 
     @asynccontextmanager
     async def merged_lifespan(app: FastAPI):
         # FastMCP session manager first, then service wiring.
-        async with mcp_http.lifespan(mcp_http):
-            async with lifespan(app):
-                yield
+        async with mcp_http.lifespan(mcp_http), lifespan(app):
+            yield
 
     app = FastAPI(
         title="SAP Download Manager",
         version=__version__,
-        description="Python web rewrite of the SAP Download Manager "
-                    "(DLManager.jar 3.2.1)",
+        description="Python web rewrite of the SAP Download Manager (DLManager.jar 3.2.1)",
         lifespan=merged_lifespan,
     )
     _mcp_holder["app"] = app
@@ -162,10 +159,8 @@ def create_app(service_factory=None) -> FastAPI:
     async def mcp_token_guard(request: Request, call_next):
         if mcp_token and request.url.path.startswith("/mcp"):
             auth = request.headers.get("Authorization", "")
-            if not (auth.startswith("Bearer ") and
-                    secrets.compare_digest(auth[7:], mcp_token)):
-                return JSONResponse({"detail": "Invalid MCP token"},
-                                    status_code=401)
+            if not (auth.startswith("Bearer ") and secrets.compare_digest(auth[7:], mcp_token)):
+                return JSONResponse({"detail": "Invalid MCP token"}, status_code=401)
         response = await call_next(request)
         # UI files change between image rebuilds - force revalidation so
         # browsers never mix stale heuristic-cached modules with new ones.
@@ -204,9 +199,9 @@ def create_app(service_factory=None) -> FastAPI:
 
     # Vendored OpenUI5 runtime (self-hosted, no CDN dependency).
     # NOTE: must be mounted before /ui - Starlette mounts match by prefix.
-    ui5 = Path(os.environ.get("DLM_UI5_DIR") or (
-        Path(__file__).resolve().parent.parent.parent / "ui5"
-    ))
+    ui5 = Path(
+        os.environ.get("DLM_UI5_DIR") or (Path(__file__).resolve().parent.parent.parent / "ui5")
+    )
     if ui5.is_dir():
         app.mount("/ui5", StaticFiles(directory=ui5), name="ui5")
 

@@ -35,7 +35,7 @@ def test_basic_auth_validation_missing_password():
 
 def test_cert_auth_validation_missing_path():
     config = ConnectionConfig(sap_url="https://portal", use_cert_auth=True)
-    with pytest.raises(AuthenticationError := AuthenticationConfigError):
+    with pytest.raises(AuthenticationConfigError):
         config.validate_auth()
 
 
@@ -89,17 +89,13 @@ def test_content_length_prefers_content_range():
     )
     from sapdlm.client.connection import SapResponse
 
-    wrapped = SapResponse(
-        status_code=206, headers=response.headers, body=b""
-    )
+    wrapped = SapResponse(status_code=206, headers=response.headers, body=b"")
     assert wrapped.content_length() == 12345
 
 
 # --------------------------------------------------------------- DownloadClient
 
-BASKET_BODY = (
-    '{"d":{"results":[{"Name":"OBJID","Value":"K1|SAR|Text|10|1|20250101000000|0"}]}}'
-)
+BASKET_BODY = '{"d":{"results":[{"Name":"OBJID","Value":"K1|SAR|Text|10|1|20250101000000|0"}]}}'
 
 
 def test_check_basket_content_success():
@@ -134,7 +130,9 @@ def test_check_basket_content_auth_failure():
     client = DownloadClient(connection.config)
     from unittest.mock import patch
 
-    with patch("sapdlm.client.download_client.SapConnection", return_value=connection):
-        with pytest.raises(SapIOError, match="401"):
-            client.check_basket_content()
+    with (
+        patch("sapdlm.client.download_client.SapConnection", return_value=connection),
+        pytest.raises(SapIOError, match="401"),
+    ):
+        client.check_basket_content()
     assert client.connected is False

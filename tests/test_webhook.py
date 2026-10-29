@@ -13,8 +13,9 @@ from sapdlm.api.service import Service
 from tests.test_api import configure, portal_handler, wait_task
 
 
-def make_client(tmp_path: Path, monkeypatch, posts: list[dict],
-                hook_url: str = "https://hook.test/notify") -> TestClient:
+def make_client(
+    tmp_path: Path, monkeypatch, posts: list[dict], hook_url: str = "https://hook.test/notify"
+) -> TestClient:
     """A client whose service delivers webhooks into ``posts``."""
     data_dir = Path(tmp_path) / "data"
     download_dir = Path(tmp_path) / "store"
@@ -23,11 +24,13 @@ def make_client(tmp_path: Path, monkeypatch, posts: list[dict],
     transport = httpx.MockTransport(portal_handler)
 
     def hook_handler(request: httpx.Request) -> httpx.Response:
-        posts.append({
-            "url": str(request.url),
-            "body": request.read(),
-            "headers": dict(request.headers),
-        })
+        posts.append(
+            {
+                "url": str(request.url),
+                "body": request.read(),
+                "headers": dict(request.headers),
+            }
+        )
         return httpx.Response(200)
 
     def service_factory(data_dir, download_dir, **kw):
@@ -42,10 +45,8 @@ def make_client(tmp_path: Path, monkeypatch, posts: list[dict],
     client = TestClient(create_app(service_factory=service_factory))
     with client:
         configure(client)
-        assert client.put("/api/config",
-                          json={"webhook_url": hook_url}).status_code == 200
-        assert client.put("/api/credentials",
-                          json={"webhook_secret": "shh"}).status_code == 200
+        assert client.put("/api/config", json={"webhook_url": hook_url}).status_code == 200
+        assert client.put("/api/credentials", json={"webhook_secret": "shh"}).status_code == 200
     return client
 
 
@@ -53,8 +54,9 @@ def test_webhook_on_completed_download(tmp_path, monkeypatch):
     posts: list[dict] = []
     with make_client(tmp_path, monkeypatch, posts) as client:
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
 
     assert len(posts) == 1
     payload = json.loads(posts[0]["body"])
@@ -84,8 +86,9 @@ def test_no_webhook_without_url(tmp_path, monkeypatch):
     posts: list[dict] = []
     with make_client(tmp_path, monkeypatch, posts, hook_url="") as client:
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
     assert posts == []
 
 

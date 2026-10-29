@@ -12,16 +12,14 @@ import threading
 from sapdlm.api.service import Service
 
 _METRIC_HELP = {
-    "sapdlm_downloads_total": (
-        "Counter", "Number of successfully completed object downloads."),
-    "sapdlm_download_failures_total": (
-        "Counter", "Number of failed object downloads."),
+    "sapdlm_downloads_total": ("Counter", "Number of successfully completed object downloads."),
+    "sapdlm_download_failures_total": ("Counter", "Number of failed object downloads."),
     "sapdlm_bytes_downloaded_total": (
-        "Counter", "Total bytes downloaded from the SAP file servers."),
-    "sapdlm_active_downloads": (
-        "Gauge", "Number of objects currently downloading."),
-    "sapdlm_basket_items": (
-        "Gauge", "Number of objects in the download basket."),
+        "Counter",
+        "Total bytes downloaded from the SAP file servers.",
+    ),
+    "sapdlm_active_downloads": ("Gauge", "Number of objects currently downloading."),
+    "sapdlm_basket_items": ("Gauge", "Number of objects in the download basket."),
 }
 
 
@@ -42,15 +40,11 @@ class Metrics:
 
     def track_object_finished(self, dockey: str, success: bool) -> None:
         with self._lock:
-            key = ("sapdlm_downloads_total" if success
-                   else "sapdlm_download_failures_total")
+            key = "sapdlm_downloads_total" if success else "sapdlm_download_failures_total"
             self._counters[key] += 1
             # Progress events are throttled to ~1/s; take the final committed
             # bytes from the state store so the counter is exact.
-            final = sum(
-                c.bytes_committed
-                for c in self._service.store.components(dockey)
-            )
+            final = sum(c.bytes_committed for c in self._service.store.components(dockey))
             previous = self._bytes_per_object.get(dockey, 0)
             if final > previous:
                 self._counters["sapdlm_bytes_downloaded_total"] += final - previous
@@ -61,8 +55,7 @@ class Metrics:
         with self._lock:
             previous = self._bytes_per_object.get(dockey, 0)
             if bytes_committed > previous:
-                self._counters["sapdlm_bytes_downloaded_total"] += (
-                    bytes_committed - previous)
+                self._counters["sapdlm_bytes_downloaded_total"] += bytes_committed - previous
                 self._bytes_per_object[dockey] = bytes_committed
 
     def forget_object(self, dockey: str) -> None:
@@ -76,8 +69,7 @@ class Metrics:
         with self._lock:
             counters = dict(self._counters)
         active = len(self._service.manager.downloading_keys)
-        basket_items = (len(self._service.basket.items)
-                        if self._service.basket else 0)
+        basket_items = len(self._service.basket.items) if self._service.basket else 0
         lines = []
         for name, (kind, help_text) in _METRIC_HELP.items():
             lines.append(f"# HELP {name} {help_text}")

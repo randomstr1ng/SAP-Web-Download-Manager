@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import httpx
 from fastapi.testclient import TestClient
 
 from tests.portal_stub import COMP_BODY
@@ -13,8 +12,9 @@ def _downloaded_client(tmp_path, monkeypatch) -> TestClient:
     with make_client(tmp_path, monkeypatch=monkeypatch) as client:
         configure(client)
         wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
-        wait_task(client, client.post("/api/downloads/start",
-                                     json={"keys": ["K1"]}).json()["task_id"])
+        wait_task(
+            client, client.post("/api/downloads/start", json={"keys": ["K1"]}).json()["task_id"]
+        )
         return client
 
 
@@ -40,24 +40,24 @@ def test_file_served_full(tmp_path, monkeypatch):
 def test_range_requests(tmp_path, monkeypatch):
     with _downloaded_client(tmp_path, monkeypatch) as client:
         # start-end
-        resp = client.get("/api/objects/K1/files/comp.bin",
-                          headers={"Range": "bytes=0-99"})
+        resp = client.get("/api/objects/K1/files/comp.bin", headers={"Range": "bytes=0-99"})
         assert resp.status_code == 206
         assert resp.content == COMP_BODY[:100]
         assert resp.headers["content-range"] == f"bytes 0-99/{len(COMP_BODY)}"
         # open-ended
-        resp = client.get("/api/objects/K1/files/comp.bin",
-                          headers={"Range": f"bytes={len(COMP_BODY) - 10}-"})
+        resp = client.get(
+            "/api/objects/K1/files/comp.bin", headers={"Range": f"bytes={len(COMP_BODY) - 10}-"}
+        )
         assert resp.status_code == 206
         assert resp.content == COMP_BODY[-10:]
         # suffix
-        resp = client.get("/api/objects/K1/files/comp.bin",
-                          headers={"Range": "bytes=-10"})
+        resp = client.get("/api/objects/K1/files/comp.bin", headers={"Range": "bytes=-10"})
         assert resp.status_code == 206
         assert resp.content == COMP_BODY[-10:]
         # unsatisfiable
-        resp = client.get("/api/objects/K1/files/comp.bin",
-                          headers={"Range": f"bytes={len(COMP_BODY) + 5}-"})
+        resp = client.get(
+            "/api/objects/K1/files/comp.bin", headers={"Range": f"bytes={len(COMP_BODY) + 5}-"}
+        )
         assert resp.status_code == 416
 
 

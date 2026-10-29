@@ -11,7 +11,7 @@ import pytest
 
 from sapdlm.client.basket import DownloadComponent, DownloadEnd, DownloadStart, ObjectVersion
 from sapdlm.client.connection import ConnectionConfig
-from sapdlm.client.constants import FileStatus, LocalStatus, MAX_HISTORY_ENTRIES
+from sapdlm.client.constants import MAX_HISTORY_ENTRIES, FileStatus, LocalStatus
 from sapdlm.client.download_client import DownloadClient
 from sapdlm.engine.description import save_description
 from sapdlm.engine.manager import DownloadAbort, DownloadManager
@@ -35,9 +35,7 @@ class FakePortalClient(DownloadClient):
         )
         self.reported_version = reported_version
         self.end_error = end_error
-        self.components = components or [
-            ("DOWNLOAD0_749_LINUX_X86_64.SAR", COMP_URL, "SAPSSO=tok")
-        ]
+        self.components = components or [("DOWNLOAD0_749_LINUX_X86_64.SAR", COMP_URL, "SAPSSO=tok")]
         self.end_called = False
 
     def get_object_version(self, dockey):
@@ -46,16 +44,13 @@ class FakePortalClient(DownloadClient):
     def start_download(self, dockey):
         start = DownloadStart(dockey=dockey)
         for name, url, token in self.components:
-            from sapdlm.client.basket import DownloadComponent
-
             start.components.append(DownloadComponent(name=name, url=url, token=token))
         start.description = ["SAP Kernel 7.49"]
         return start
 
     def end_download(self, dockey):
         self.end_called = True
-        return DownloadEnd(basket_status=5 if self.end_error else 4,
-                           error=self.end_error)
+        return DownloadEnd(basket_status=5 if self.end_error else 4, error=self.end_error)
 
 
 def range_aware_handler(request: httpx.Request) -> httpx.Response:
@@ -79,15 +74,15 @@ def range_aware_handler(request: httpx.Request) -> httpx.Response:
             },
         )
     return httpx.Response(
-        200, content=COMPONENT_BODY,
+        200,
+        content=COMPONENT_BODY,
         headers={"Content-Length": str(len(COMPONENT_BODY))},
     )
 
 
 def make_manager(tmp_path: Path, client: DownloadClient, **kwargs) -> DownloadManager:
     store = StateStore(tmp_path / "app.db")
-    store.upsert_object(ObjectRecord(dockey="K1", text="Kernel", doctype="SAR",
-                                     size_kb=200))
+    store.upsert_object(ObjectRecord(dockey="K1", text="Kernel", doctype="SAR", size_kb=200))
     factory = kwargs.pop(
         "component_client_factory",
         lambda: httpx.Client(transport=httpx.MockTransport(range_aware_handler)),
@@ -99,9 +94,9 @@ def make_manager(tmp_path: Path, client: DownloadClient, **kwargs) -> DownloadMa
 
 # ------------------------------------------------------------------ state store
 
+
 def test_history_cap(tmp_path):
     store = StateStore(tmp_path / "cap.db")
-    from sapdlm.client.constants import MAX_HISTORY_ENTRIES
 
     for i in range(MAX_HISTORY_ENTRIES + 10):
         store.add_history(f"K{i}", "t", "SAR", 1)
@@ -111,35 +106,61 @@ def test_history_cap(tmp_path):
 
 def test_sync_components_resets_on_url_change(tmp_path):
     store = StateStore(tmp_path / "sync.db")
-    record = ObjectRecord(
-        dockey="K1"
-    )
+    record = ObjectRecord(dockey="K1")
     store.upsert_object(record)
     from sapdlm.engine.state import ComponentRecord
 
-    store.sync_components("K1", [
-        ComponentRecord(id=None, dockey="K1", seq=0, file_name="a.sar",
-                        resource_url="https://download.sap.com/a.sar", token="t=1"),
-    ])
+    store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="a.sar",
+                resource_url="https://download.sap.com/a.sar",
+                token="t=1",
+            ),
+        ],
+    )
     comps = store.components("K1")
     assert len(comps) == 1
     # simulate progress
     store.patch_component(comps[0], bytes_committed=100, file_status=FileStatus.RUNNING)
     # same URL -> progress kept
-    comps = store.sync_components("K1", [
-        ComponentRecord(id=None, dockey="K1", seq=0, file_name="a.sar",
-                        resource_url="https://download.sap.com/a.sar", token="t=1"),
-    ])
+    comps = store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="a.sar",
+                resource_url="https://download.sap.com/a.sar",
+                token="t=1",
+            ),
+        ],
+    )
     assert comps[0].bytes_committed == 100
     # changed URL -> progress reset
-    comps = store.sync_components("K1", [
-        ComponentRecord(id=None, dockey="K1", seq=0, file_name="a.sar",
-                        resource_url="https://download.sap.com/a2.sar", token="t=1"),
-    ])
+    comps = store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="a.sar",
+                resource_url="https://download.sap.com/a2.sar",
+                token="t=1",
+            ),
+        ],
+    )
     assert comps[0].bytes_committed == 0
 
 
 # ------------------------------------------------------------ full object download
+
 
 def test_full_download_success(tmp_path):
     manager = make_manager(tmp_path, FakePortalClient())
@@ -155,7 +176,9 @@ def test_full_download_success(tmp_path):
     messages = [p.message for p in store.protocol("K1")]
     assert any("completed successfully" in m for m in messages)
     # description saved (store dir, no subdir)
-    assert (tmp_path / "store" / "K1").exists() or (tmp_path / "store" / "749_LINUX_X86_64").exists()
+    assert (tmp_path / "store" / "K1").exists() or (
+        tmp_path / "store" / "749_LINUX_X86_64"
+    ).exists()
 
 
 def test_download_end_failure_no_history(tmp_path):
@@ -170,8 +193,9 @@ def test_download_end_failure_no_history(tmp_path):
 
 
 def test_allowlist_rejection(tmp_path):
-    client = FakePortalClient(components=[("DOWNLOAD0_evil.bin",
-                                          "https://evil.example.com/x.bin", "")])
+    client = FakePortalClient(
+        components=[("DOWNLOAD0_evil.bin", "https://evil.example.com/x.bin", "")]
+    )
     manager = make_manager(tmp_path, client)
     with pytest.raises(DownloadAbort):
         manager.download_object("K1")
@@ -182,6 +206,7 @@ def test_allowlist_rejection(tmp_path):
 
 # ------------------------------------------------------------------- pause/resume
 
+
 def test_pause_and_resume(tmp_path):
     manager = make_manager(tmp_path, FakePortalClient())
     store = manager.store
@@ -190,14 +215,22 @@ def test_pause_and_resume(tmp_path):
     part_dir.mkdir(exist_ok=True)
     part = part_dir / "749_LINUX_X86_64.SAR.part"
     part.write_bytes(COMPONENT_BODY[:100_000])
-    comps = store.sync_components("K1", [
-        ComponentRecord(
-            id=None, dockey="K1", seq=0, file_name="749_LINUX_X86_64.SAR",
-            resource_url=COMP_URL, token="SAPSSO=tok",
-            local_file_name=str(part), bytes_committed=100_000,
-            file_status=FileStatus.RUNNING,
-        )
-    ])
+    store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="749_LINUX_X86_64.SAR",
+                resource_url=COMP_URL,
+                token="SAPSSO=tok",
+                local_file_name=str(part),
+                bytes_committed=100_000,
+                file_status=FileStatus.RUNNING,
+            )
+        ],
+    )
     store.patch_object("K1", local_version=5, local_status=LocalStatus.PARTIAL)
 
     assert manager.download_object("K1") is True
@@ -209,21 +242,30 @@ def test_pause_and_resume(tmp_path):
 
 
 def test_resume_not_supported_restarts(tmp_path):
-    client = FakePortalClient(components=[("DOWNLOAD0_nr.sar",
-                                           "https://download.sap.com/no-resume.sar", "")])
+    client = FakePortalClient(
+        components=[("DOWNLOAD0_nr.sar", "https://download.sap.com/no-resume.sar", "")]
+    )
     manager = make_manager(tmp_path, client)
     store = manager.store
     part = tmp_path / "store" / "nr.sar.part"
     part.parent.mkdir(exist_ok=True)
     part.write_bytes(COMPONENT_BODY[:50_000])
-    store.sync_components("K1", [
-        ComponentRecord(
-            id=None, dockey="K1", seq=0, file_name="nr.sar",
-            resource_url="https://download.sap.com/no-resume.sar", token="",
-            local_file_name=str(part), bytes_committed=50_000,
-            file_status=FileStatus.RUNNING,
-        )
-    ])
+    store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="nr.sar",
+                resource_url="https://download.sap.com/no-resume.sar",
+                token="",
+                local_file_name=str(part),
+                bytes_committed=50_000,
+                file_status=FileStatus.RUNNING,
+            )
+        ],
+    )
     store.patch_object("K1", local_version=5)
     assert manager.download_object("K1") is True
     target = tmp_path / "store" / "nr.sar"
@@ -236,14 +278,22 @@ def test_version_mismatch_cleans_state(tmp_path):
     stale = tmp_path / "store" / "stale.sar.part"
     stale.parent.mkdir(exist_ok=True)
     stale.write_bytes(b"OLD")
-    store.sync_components("K1", [
-        ComponentRecord(
-            id=None, dockey="K1", seq=0, file_name="749_LINUX_X86_64.SAR",
-            resource_url=COMP_URL, token="t",
-            local_file_name=str(stale), bytes_committed=3,
-            file_status=FileStatus.RUNNING,
-        )
-    ])
+    store.sync_components(
+        "K1",
+        [
+            ComponentRecord(
+                id=None,
+                dockey="K1",
+                seq=0,
+                file_name="749_LINUX_X86_64.SAR",
+                resource_url=COMP_URL,
+                token="t",
+                local_file_name=str(stale),
+                bytes_committed=3,
+                file_status=FileStatus.RUNNING,
+            )
+        ],
+    )
     store.patch_object("K1", local_version=5)
     assert manager.download_object("K1") is True
     assert not stale.exists()  # old partial deleted on version mismatch
@@ -261,19 +311,22 @@ def test_stop_event_pauses(tmp_path):
 
 # -------------------------------------------------------------------- description
 
+
 def test_description_binary_patches(tmp_path):
     desc = [
         "{1F3AAA90-4782-4632-8C5E-E92F7A7751E4}=BINARY_PATCHES",
         "AArowstartBB rowstartCC",
     ]
-    target = save_description(tmp_path, "K1", desc, use_subdir=False,
-                              first_component_file="kernel.sar")
+    target = save_description(
+        tmp_path, "K1", desc, use_subdir=False, first_component_file="kernel.sar"
+    )
     assert target.name == "kernel"
     assert target.read_text() == "AA\nBB \nCC"
 
 
 def test_description_plain(tmp_path):
-    target = save_description(tmp_path, "K1", ["line1", "line2"], use_subdir=True,
-                              first_component_file="kernel.sar")
+    target = save_description(
+        tmp_path, "K1", ["line1", "line2"], use_subdir=True, first_component_file="kernel.sar"
+    )
     assert target == tmp_path / "K1" / "kernel"
     assert target.read_text() == "line1\nline2"

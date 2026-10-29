@@ -20,8 +20,8 @@ from sapdlm.client.constants import FileStatus, LocalStatus
 from sapdlm.client.download_client import DownloadClient
 from sapdlm.client.parsers import is_valid_download_url
 from sapdlm.engine.component import (
-    ComponentDownloadError,
     ComponentDownloader,
+    ComponentDownloadError,
     ComponentProgress,
 )
 from sapdlm.engine.description import save_description
@@ -135,8 +135,9 @@ class DownloadManager:
             raise DownloadAbort(f"download start failed: {exc}") from exc
 
         if not self._validate_start(dockey, start):
-            raise DownloadAbort("The SAP Support Portal returned an error while "
-                                "trying to start the download")
+            raise DownloadAbort(
+                "The SAP Support Portal returned an error while trying to start the download"
+            )
 
         components = self._sync_components(dockey, start)
         self.store.patch_object(dockey, local_status=LocalStatus.PARTIAL)
@@ -158,9 +159,7 @@ class DownloadManager:
             if comp.file_status == FileStatus.COMPLETED:
                 completed += 1
                 continue
-            self.store.add_protocol(
-                dockey, f"Downloading component {comp.resource_url}"
-            )
+            self.store.add_protocol(dockey, f"Downloading component {comp.resource_url}")
             nr, n_total = completed + 1, total
             done = False
             attempts = 0
@@ -170,7 +169,10 @@ class DownloadManager:
                     return False
                 try:
                     done = downloader.download(
-                        comp, dockey, self.use_subdir, stop,
+                        comp,
+                        dockey,
+                        self.use_subdir,
+                        stop,
                         progress=self._wrap_progress(progress, nr, n_total),
                     )
                 except ComponentDownloadError as exc:
@@ -179,17 +181,14 @@ class DownloadManager:
                     # multi-GB archives). Resume picks up at committed bytes.
                     if exc.status_code is not None and exc.status_code < 500:
                         self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
-                        raise DownloadAbort(
-                            f"component download failed: {exc}"
-                        ) from exc
+                        raise DownloadAbort(f"component download failed: {exc}") from exc
                     if attempts >= self.component_retries:
                         self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
                         raise DownloadAbort(
-                            f"component download failed after "
-                            f"{attempts + 1} attempts: {exc}"
+                            f"component download failed after {attempts + 1} attempts: {exc}"
                         ) from exc
                     attempts += 1
-                    backoff = min(2 ** attempts, 60)
+                    backoff = min(2**attempts, 60)
                     self.store.add_protocol(
                         dockey,
                         f"Component download error ({exc}); retrying in "
@@ -210,8 +209,7 @@ class DownloadManager:
                     return False  # paused
             completed += 1
             if comp.resource_url and all(
-                c.file_status == FileStatus.COMPLETED
-                for c in self.store.components(dockey)
+                c.file_status == FileStatus.COMPLETED for c in self.store.components(dockey)
             ):
                 self.store.patch_object(dockey, local_status=LocalStatus.DOWNLOADED)
 
@@ -224,8 +222,11 @@ class DownloadManager:
             try:
                 first = components[0].file_name if components else ""
                 desc_path = save_description(
-                    self.download_store, dockey, start.description,
-                    self.use_subdir, first,
+                    self.download_store,
+                    dockey,
+                    start.description,
+                    self.use_subdir,
+                    first,
                 )
                 self.store.patch_object(dockey, desc_file=str(desc_path))
             except (OSError, ValueError) as exc:
@@ -239,9 +240,7 @@ class DownloadManager:
         return False
 
     def _finish(self, dockey: str, start: DownloadStart) -> bool:
-        self.store.add_protocol(
-            dockey, "Updating Object Status in your Download Basket ..."
-        )
+        self.store.add_protocol(dockey, "Updating Object Status in your Download Basket ...")
         try:
             end = self.client.end_download(dockey)
         except Exception as exc:
@@ -253,18 +252,12 @@ class DownloadManager:
                 "Unable to save the download end status in the SAP Support Portal.",
                 ENTRYTYPE_EXCEPTION,
             )
-            raise DownloadAbort(
-                "Unable to save the download end status in the SAP Support Portal."
-            )
+            raise DownloadAbort("Unable to save the download end status in the SAP Support Portal.")
         record = self.store.get_object(dockey)
         self.store.patch_object(dockey, local_status=LocalStatus.COMPLETE)
         if record is not None:
-            self.store.add_history(
-                dockey, record.text, record.doctype, record.local_version
-            )
-        self.store.add_protocol(
-            dockey, "The object download completed successfully."
-        )
+            self.store.add_history(dockey, record.text, record.doctype, record.local_version)
+        self.store.add_protocol(dockey, "The object download completed successfully.")
         return True
 
     # ----------------------------------------------------------------- helpers
@@ -278,7 +271,8 @@ class DownloadManager:
         for comp in start.components:
             if not is_valid_download_url(comp.url):
                 self._protocol(
-                    dockey, f"Failed to validate URL: {comp.url}",
+                    dockey,
+                    f"Failed to validate URL: {comp.url}",
                     ENTRYTYPE_EXCEPTION,
                 )
                 return False
@@ -296,8 +290,12 @@ class DownloadManager:
             file_name = sanitize_file_name(file_name, dockey)
             records.append(
                 ComponentRecord(
-                    id=None, dockey=dockey, seq=i, file_name=file_name,
-                    resource_url=url, token=comp.token,
+                    id=None,
+                    dockey=dockey,
+                    seq=i,
+                    file_name=file_name,
+                    resource_url=url,
+                    token=comp.token,
                 )
             )
         return self.store.sync_components(dockey, records)
@@ -333,11 +331,12 @@ class DownloadManager:
             if not path.exists():
                 self.store.add_protocol(
                     dockey,
-                    "The predownloaded data was deleted. "
-                    "Restarting at byte position 0.",
+                    "The predownloaded data was deleted. Restarting at byte position 0.",
                 )
                 self.store.patch_component(
-                    comp, local_file_name="", bytes_committed=0,
+                    comp,
+                    local_file_name="",
+                    bytes_committed=0,
                     file_status=FileStatus.NOT_STARTED,
                 )
             elif path.stat().st_size == comp.bytes_committed:
@@ -352,7 +351,9 @@ class DownloadManager:
             else:
                 path.unlink(missing_ok=True)
                 self.store.patch_component(
-                    comp, local_file_name="", bytes_committed=0,
+                    comp,
+                    local_file_name="",
+                    bytes_committed=0,
                     file_status=FileStatus.NOT_STARTED,
                 )
 
@@ -364,8 +365,11 @@ class DownloadManager:
                 Path(comp.local_file_name).unlink(missing_ok=True)
         self.store.delete_object_components(dockey)
         self.store.patch_object(
-            dockey, local_status=LocalStatus.NOT_STARTED, local_version=0,
-            desc_file="", dir_created=0,
+            dockey,
+            local_status=LocalStatus.NOT_STARTED,
+            local_version=0,
+            desc_file="",
+            dir_created=0,
         )
 
     def delete_local_data(self, dockey: str) -> None:
@@ -389,16 +393,15 @@ class DownloadManager:
     def _build_component_client(self) -> httpx.Client:
         """Component downloads inherit auth/proxy from the portal connection."""
         config: ConnectionConfig = self.client.config
-        kwargs: dict = {"timeout": httpx.Timeout(30.0, read=None),
-                        "follow_redirects": True}
+        kwargs: dict = {"timeout": httpx.Timeout(30.0, read=None), "follow_redirects": True}
         if config.use_proxy and config.proxy_host:
             auth = (
                 f"{config.proxy_username}:{config.proxy_password}"
-                if config.proxy_username else None
+                if config.proxy_username
+                else None
             )
             kwargs["proxy"] = (
-                f"http://{auth + '@' if auth else ''}"
-                f"{config.proxy_host}:{config.proxy_port}"
+                f"http://{auth + '@' if auth else ''}{config.proxy_host}:{config.proxy_port}"
             )
         if config.use_cert_auth:
             kwargs["cert"] = config.cert_path

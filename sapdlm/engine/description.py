@@ -42,9 +42,7 @@ def save_description(
     if not lines:
         raise ValueError("No description content to save.")
 
-    file_name = component_base_name(
-        [first_component_file] if first_component_file else [], dockey
-    )
+    file_name = component_base_name([first_component_file] if first_component_file else [], dockey)
     target_dir = Path(store_dir) / dockey if use_subdir else Path(store_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
     target = target_dir / file_name
