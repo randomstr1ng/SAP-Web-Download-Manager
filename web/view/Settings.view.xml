@@ -1,4 +1,4 @@
-<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" controllerName="dlm.controller.Settings">
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" controllerName="dlm.controller.Settings">
 <Page id="settingsPage" title="{i18n>settingsTitle}" showNavButton="true"
 	  navButtonPress=".onBack" floatingFooter="true">
 	<content>
@@ -47,6 +47,12 @@
 			</Panel>
 			<Panel headerText="{i18n>options}" expandable="false">
 				<form:SimpleForm editable="true" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+				<Label text="{i18n>language}"/>
+					<Select selectedKey="{/lang}" change=".onLanguageChange">
+						<core:Item key="" text="{i18n>langAuto}"/>
+						<core:Item key="en" text="English"/>
+						<core:Item key="de" text="Deutsch"/>
+					</Select>
 					<Label text="{i18n>rememberCredentials}"/>
 					<Switch state="{/settings/remember_credentials}"/>
 					<Label text="{i18n>autoStart}"/>

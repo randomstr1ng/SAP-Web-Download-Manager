@@ -125,6 +125,11 @@ message. Fix: `sudo chown -R 1000:1000 data downloads`.
 
 - Views/controllers live in `web/` (OpenUI5 XML views + controllers, i18n in
   `web/i18n/i18n.properties`); served at `/ui` by the same uvicorn process.
+- Localization: `i18n.properties` is the English base bundle, `i18n_de.properties`
+  the German one. UI5 picks the browser locale automatically; an explicit choice
+  in Settings is stored in the browser (`localStorage`) and applied before UI5
+  loads. Any new key must be added to ALL bundles (base + `i18n_en`,
+  `i18n_en_US`, `i18n_de`).
 - The OpenUI5 runtime is vendored in `ui5/resources/` — do not commit changes to
   it; it was pruned (debug files, unused libraries) from the official
   `openui5-runtime-mobile` package.

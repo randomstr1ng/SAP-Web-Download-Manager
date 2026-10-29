@@ -13,7 +13,24 @@ sap.ui.define([
 		onInit: function () {
 			this._bSecretsLoaded = false;
 			this._oModel = sap.ui.getCore().getModel();
+			try {
+				this._oModel.setProperty("/lang", localStorage.getItem("dlm-lang") || "");
+			} catch (e) {
+				this._oModel.setProperty("/lang", "");
+			}
 			this._load();
+		},
+
+		onLanguageChange: function (oEvent) {
+			var sLang = oEvent.getParameter("selectedItem").getKey();
+			try {
+				if (sLang) {
+					localStorage.setItem("dlm-lang", sLang);
+				} else {
+					localStorage.removeItem("dlm-lang");
+				}
+			} catch (e) { /* storage unavailable - nothing to persist */ }
+			window.location.reload();  // applied before UI5 loads
 		},
 
 		_coreModel: function (sName) {
