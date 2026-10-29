@@ -53,6 +53,8 @@
 					<Switch state="{/settings/autostart_download}"/>
 					<Label text="{i18n>trace}"/>
 					<Switch state="{/settings/trace}"/>
+					<Label text="{i18n>maxConcurrentObjects}"/>
+					<Input value="{/settings/max_concurrent_objects}" type="Number"/>
 					<Label text="{i18n>webhookUrl}"/>
 					<Input value="{/settings/webhook_url}" placeholder="https://..."/>
 					<Label text="{i18n>webhookSecret}"/>

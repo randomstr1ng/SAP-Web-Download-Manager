@@ -30,6 +30,7 @@ class SettingsPayload(BaseModel):
     remember_credentials: bool | None = None
     trace: bool | None = None
     webhook_url: str | None = None
+    max_concurrent_objects: int | None = None
     schedule_at: str | None = None
     schedule_mode: str | None = None
     autostart_download: bool | None = None

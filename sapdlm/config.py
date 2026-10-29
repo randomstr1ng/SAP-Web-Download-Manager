@@ -41,6 +41,7 @@ class Settings:
     schedule_mode: str = "all"  # "all" | "selected"
     autostart_download: bool = False  # /a, /x parity: drain basket at startup
     component_retries: int = 3  # auto-retry attempts per component download
+    max_concurrent_objects: int = 1  # objects downloaded in parallel (1 = parity)
     webhook_url: str = ""  # JSON POST on download completion/failure
 
     # ------------------------------------------------------------------ helpers

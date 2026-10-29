@@ -11,6 +11,7 @@ import logging
 import threading
 import uuid
 import httpx
+from concurrent.futures import ThreadPoolExecutor
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -128,7 +129,6 @@ class Service:
         self._webhook_client = webhook_client or httpx.Client(timeout=5.0)
         self.metrics = None
         self._component_client_factory = component_client_factory
-        self._download_lock = threading.Lock()  # one download task at a time (parity)
         self.manager = DownloadManager(
             self.store, self._build_client(), self.download_dir,
             use_subdir=self.settings.create_subdir,
@@ -306,27 +306,40 @@ class Service:
     def run_download(self, keys: list[str],
                      progress: Callable[[ComponentProgress], None] | None = None
                      ) -> None:
-        """Sequential object processing (original: one object at a time).
+        """Process the given objects, up to max_concurrent_objects in parallel.
         Tracks metrics and sends webhook notifications per object outcome."""
-        for dockey in keys:
-            self.events.publish({"type": "status", **self.status(),
-                                "action": f"Downloading {dockey}"})
-            try:
-                done = self.manager.download_object(
-                    dockey, progress=self._progress_publisher(progress))
-                if done:
-                    metrics = getattr(self, "metrics", None)
-                    if metrics is not None:
-                        metrics.track_object_finished(dockey, success=True)
-                    self._send_webhook("completed", dockey)
-            except Exception as exc:  # engine aborts on this object, continue
+        workers = max(1, self.settings.max_concurrent_objects)
+        if workers == 1 or len(keys) <= 1:
+            for dockey in keys:
+                self._run_one(dockey, progress)
+            return
+        with ThreadPoolExecutor(max_workers=min(workers, len(keys))) as pool:
+            futures = [pool.submit(self._run_one, dockey, progress)
+                       for dockey in keys]
+            for future in futures:
+                future.result()
+
+    def _run_one(self, dockey: str,
+                 progress: Callable[[ComponentProgress], None] | None) -> None:
+        """Download a single object (metrics + webhook on the outcome)."""
+        self.events.publish({"type": "status", **self.status(),
+                            "action": f"Downloading {dockey}"})
+        try:
+            done = self.manager.download_object(
+                dockey, progress=self._progress_publisher(progress))
+            if done:
                 metrics = getattr(self, "metrics", None)
                 if metrics is not None:
-                    metrics.track_object_finished(dockey, success=False)
-                self._send_webhook("failed", dockey)
-                logger.warning("download of %s failed: %s", dockey, exc)
-            finally:
-                self.events.publish({"type": "status", **self.status()})
+                    metrics.track_object_finished(dockey, success=True)
+                self._send_webhook("completed", dockey)
+        except Exception as exc:  # engine aborts on this object, continue
+            metrics = getattr(self, "metrics", None)
+            if metrics is not None:
+                metrics.track_object_finished(dockey, success=False)
+            self._send_webhook("failed", dockey)
+            logger.warning("download of %s failed: %s", dockey, exc)
+        finally:
+            self.events.publish({"type": "status", **self.status()})
 
     def _progress_publisher(
         self, progress: Callable[[ComponentProgress], None] | None
@@ -398,6 +411,8 @@ class Service:
             if isinstance(value, str):
                 current[key] = value.strip()
         self.settings = Settings.from_dict(current)
+        self.settings.max_concurrent_objects = max(
+            1, self.settings.max_concurrent_objects)
         save_settings(self.data_dir, self.settings)
         self.reload_engine()
         self._apply_log_level()
