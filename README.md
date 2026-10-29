@@ -1,5 +1,11 @@
 # SAP Web Download Manager
 
+[![CI](https://github.com/randomstr1ng/SAP-Web-Download-Manager/actions/workflows/ci.yml/badge.svg)](https://github.com/randomstr1ng/SAP-Web-Download-Manager/actions/workflows/ci.yml)
+[![Release](https://github.com/randomstr1ng/SAP-Web-Download-Manager/actions/workflows/release.yml/badge.svg)](https://github.com/randomstr1ng/SAP-Web-Download-Manager/actions/workflows/release.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-3776ab.svg)](pyproject.toml)
+[![Container](https://img.shields.io/badge/container-ghcr.io-2496ed.svg?logo=docker&labelColor=0d1117)](https://github.com/randomstr1ng/SAP-Web-Download-Manager/pkgs/container/sap-web-download-manager)
+
 A web-based reimplementation of the official **SAP Download Manager** - the
 Java desktop tool that downloads your [SAP Support Portal download
 basket](https://support.sap.com/en/my-support/software-downloads.html?isu_page=1&anchorId=section_995042677)
