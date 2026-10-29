@@ -356,3 +356,19 @@ def test_object_detail_endpoint(tmp_path, monkeypatch):
         assert "Kernel 7.49" in detail["description"]
 
         assert client.get("/api/objects/NOPE").status_code == 404
+
+
+def test_basket_items_include_local_files(tmp_path, monkeypatch):
+    """Basket items expose the technical file names once a download attempt
+    made them known (before that only the dockey distinguishes items with
+    identical description texts)."""
+    with make_client(tmp_path, monkeypatch=monkeypatch) as client:
+        configure(client)
+        wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
+        basket = client.get("/api/basket").json()
+        assert basket["items"][0]["local_files"] == []
+
+        wait_task(client, client.post("/api/downloads/start",
+                                     json={"keys": ["K1"]}).json()["task_id"])
+        basket = client.get("/api/basket").json()
+        assert basket["items"][0]["local_files"] == ["comp.bin"]

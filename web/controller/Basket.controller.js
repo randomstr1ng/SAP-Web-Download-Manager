@@ -55,6 +55,12 @@ sap.ui.define([
 			var aItems = oModel.getProperty("/basket/items") || [];
 			var oProgress = oModel.getProperty("/progress") || {};
 			aItems.forEach(function (oItem) {
+				// Technical line: local file names once known (after a download
+				// attempt); the dockey otherwise - items often share the same
+				// description text and differ only in size and dockey.
+				oItem.tech_text = (oItem.local_files && oItem.local_files.length)
+					? oItem.local_files.join(", ")
+					: oItem.dockey;
 				// Registration date YYYYMMDD + hhmmss -> readable
 				var sDate = oItem.reg_date || "";
 				var sTime = oItem.reg_time || "";

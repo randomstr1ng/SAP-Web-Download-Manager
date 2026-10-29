@@ -231,6 +231,13 @@ class Service:
         for item in self.basket.items.values():
             record = self.store.get_object(item.dockey)
             local_status = record.local_status if record else None
+            # Technical file names are known after a download attempt (from
+            # DOWNLOAD_START2); before that only the dockey distinguishes
+            # items with identical description texts.
+            local_files = [
+                c.file_name for c in self.store.components(item.dockey)
+                if c.file_name
+            ]
             items.append({
                 "dockey": item.dockey,
                 "text": item.text,
@@ -242,6 +249,7 @@ class Service:
                 "global_status": item.global_status,
                 "basket_status": item.basket_status,
                 "local_status": local_status,
+                "local_files": local_files,
                 "status_text": item.status_text(
                     local_status,
                     downloading=self.manager.is_downloading(item.dockey),

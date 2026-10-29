@@ -65,7 +65,7 @@
 			<items>
 				<ColumnListItem type="Active" vAlign="Middle">
 					<cells>
-						<Text text="{text}"/>
+						<ObjectIdentifier title="{text}" text="{tech_text}"/>
 						<Text text="{size_text}"/>
 						<Text text="{date_text}"/>
 						<VBox>
