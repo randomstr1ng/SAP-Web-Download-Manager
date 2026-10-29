@@ -4,9 +4,13 @@ protocol view, history."""
 from __future__ import annotations
 
 import asyncio
+import re
+from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from starlette.responses import FileResponse, Response
 
 from sapdlm.api.routes.basket import _require_configured, svc
 from sapdlm.api.service import Service
@@ -120,6 +124,86 @@ def object_detail(dockey: str, request: Request) -> dict:
 def object_protocol(dockey: str, request: Request) -> dict:
     service = svc(request)
     return {"dockey": dockey, "entries": service.object_protocol(dockey)}
+
+
+@router.get("/objects/{dockey}/files")
+def object_files(dockey: str, request: Request) -> dict:
+    """Completed local files of an object (for fetching via the browser)."""
+    service = svc(request)
+    _resolve_key(service, dockey)
+    return {"dockey": dockey, "files": service.object_files(dockey)}
+
+
+@router.get("/objects/{dockey}/files/{file_name}")
+def object_file(dockey: str, file_name: str, request: Request) -> Response:
+    """Stream a completed component file from the download store.
+
+    Supports HTTP Range requests (206 + Content-Range) so browsers can
+    resume interrupted transfers."""
+    service = svc(request)
+    _resolve_key(service, dockey)
+    path = service.resolve_local_file(dockey, file_name)
+    if path is None:
+        raise HTTPException(
+            status_code=404,
+            detail="The file does not exist (or is not part of a completed "
+                   "download on this server).",
+        )
+    size = path.stat().st_size
+    headers = {
+        "Accept-Ranges": "bytes",
+        "Content-Disposition": f"attachment; filename*=UTF-8''{quote(file_name)}",
+    }
+    range_header = request.headers.get("range")
+    if range_header:
+        start, end = _parse_range(range_header, size)
+        if start is None:
+            raise HTTPException(
+                status_code=416,
+                detail=f"Requested range is not satisfiable (file size: {size}).",
+                headers={"Content-Range": f"bytes */{size}"},
+            )
+        headers["Content-Range"] = f"bytes {start}-{end}/{size}"
+        return StreamingResponse(
+            _slice(path, start, end - start + 1),
+            status_code=206, media_type="application/octet-stream",
+            headers=headers,
+        )
+    return FileResponse(path, media_type="application/octet-stream",
+                        headers=headers)
+
+
+def _parse_range(header: str, size: int) -> tuple[int | None, int]:
+    """Parse 'bytes=a-b' / 'bytes=a-' / 'bytes=-n'. Returns (None, size) on
+    an unsatisfiable range; malformed headers fall back to a full response
+    by raising no error - the caller treats them as no-range."""
+    m = re.fullmatch(r"bytes=(\d*)-(\d*)", header.strip())
+    if not m or (not m.group(1) and not m.group(2)):
+        return 0, size - 1  # malformed: serve the whole file
+    if m.group(1):  # "a-b" or "a-"
+        start = min(int(m.group(1)), size)
+        end = min(int(m.group(2)), size - 1) if m.group(2) else size - 1
+    else:  # suffix "-n": the last n bytes
+        n = int(m.group(2))
+        if n == 0:
+            return None, size
+        start = max(0, size - n)
+        end = size - 1
+    if start > end or start >= size:
+        return None, size
+    return start, end
+
+
+def _slice(path, start: int, length: int, chunk: int = 1_048_576):
+    """Generator: stream `length` bytes from `path` starting at `start`."""
+    with open(path, "rb") as f:
+        f.seek(start)
+        while length > 0:
+            data = f.read(min(chunk, length))
+            if not data:
+                break
+            length -= len(data)
+            yield data
 
 
 @router.get("/history")

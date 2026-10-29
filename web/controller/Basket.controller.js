@@ -328,6 +328,10 @@ sap.ui.define([
 				oDetail.size_text = oDetail.size_kb ? (oDetail.size_kb).toLocaleString() + " KB" : "";
 				oDetail.files.forEach(function (f) {
 					f.bytes_text = f.bytes_committed ? Api._formatBytes(f.bytes_committed) : "";
+					f.url = f.status === "completed" && f.file_name
+						? "/api/objects/" + encodeURIComponent(sDockey)
+							+ "/files/" + encodeURIComponent(f.file_name)
+						: "";
 				});
 				var sDesc = oDetail.description || "";
 				oDetail.description_html = "<p>" + sDesc
@@ -345,6 +349,7 @@ sap.ui.define([
 					file: oBundle.getText("detailFile"),
 					bytes: oBundle.getText("detailBytes"),
 					fileStatus: oBundle.getText("status"),
+					saveFile: oBundle.getText("saveFileTooltip"),
 					description: oBundle.getText("detailDescription"),
 					close: oBundle.getText("close")
 				};

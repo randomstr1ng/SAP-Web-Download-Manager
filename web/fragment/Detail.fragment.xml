@@ -22,7 +22,10 @@
 				<items>
 					<ColumnListItem>
 						<cells>
-							<Text text="{dlg>file_name}"/>
+							<Link text="{dlg>file_name}" href="{dlg>url}"
+								visible="{= ${dlg>url} !== ''}"
+								tooltip="{dlg>labels/saveFile}"/>
+							<Text text="{dlg>file_name}" visible="{= ${dlg>url} === ''}"/>
 							<Text text="{dlg>bytes_text}"/>
 							<Text text="{dlg>status}"/>
 						</cells>

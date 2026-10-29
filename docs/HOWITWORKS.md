@@ -152,6 +152,11 @@ REST under `/api` (interactive docs at `/docs`):
 - `GET /api/basket`, `POST /api/basket/refresh`, `POST /api/basket/refresh/cancel`, `DELETE /api/basket/{dockey}`
 - `POST /api/downloads/start` (keys or `mode=all`), `POST .../{dockey}/pause|resume|cancel`, `DELETE .../{dockey}/local`
 - `GET /api/objects/{dockey}/protocol`, `GET /api/history`
+- `GET /api/objects/{dockey}/files` — completed local files of an object;
+  `GET /api/objects/{dockey}/files/{name}` streams one from the download
+  store (attachment, HTTP Range/`206` support, resume-friendly); only
+  files recorded for that object and still confined to the store are served
+  — the detail dialog links each completed file
 - `GET/PUT /api/config`, `POST /api/config/test`, `GET/PUT /api/credentials`
 - `GET/POST/DELETE /api/schedule`
 - `GET /api/tasks/{id}` — background tasks return `202` + task id
@@ -178,7 +183,9 @@ AI agents can fully drive the application via MCP (streamable HTTP at
 - Outbound portal traffic is **always HTTPS** (protocol requirement).
 - Secrets never leave the API unmasked; the credential file is `0600`.
 - Download file names from the portal are sanitized (single path segment,
-  no traversal) and confined to the download store.
+  no traversal) and confined to the download store. The file-serving
+  endpoint additionally resolves only files the engine recorded for the
+  requested object (double confinement).
 - The container runs as non-root (uid 1000).
 
 ## Data layout

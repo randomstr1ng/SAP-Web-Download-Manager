@@ -20,7 +20,7 @@ from typing import Any
 from sapdlm import DLM_VERSION, __version__
 from sapdlm.client.basket import BasketContent, BasketItem
 from sapdlm.client.connection import ConnectionConfig
-from sapdlm.client.constants import LocalStatus
+from sapdlm.client.constants import FileStatus, LocalStatus
 from sapdlm.client.download_client import DownloadClient
 from sapdlm.config import Settings, load_settings, save_settings
 from sapdlm.credentials import CredentialStore
@@ -486,3 +486,48 @@ class Service:
              "version": h.version, "date": h.date}
             for h in self.store.history()
         ]
+
+    # ------------------------------------------------------------- file serving
+
+    def object_files(self, dockey: str) -> list[dict]:
+        """Completed component files of an object (metadata only)."""
+        files = []
+        for comp in self.store.components(dockey):
+            if comp.file_status != FileStatus.COMPLETED or not comp.file_name:
+                continue
+            files.append({"file_name": comp.file_name,
+                          "size": self._local_size(comp.local_file_name)})
+        return files
+
+    def resolve_local_file(self, dockey: str, file_name: str) -> Path | None:
+        """Resolve a completed component file by its portal file name.
+
+        Confinement is double-checked: the name must belong to one of the
+        object's completed components, and the recorded on-disk path must
+        still resolve inside the download store.
+        """
+        root = self.store_root()
+        for comp in self.store.components(dockey):
+            if comp.file_name != file_name:
+                continue
+            if comp.file_status != FileStatus.COMPLETED or not comp.local_file_name:
+                return None
+            try:
+                path = Path(comp.local_file_name).resolve()
+            except OSError:
+                return None
+            if path.is_relative_to(root) and path.is_file():
+                return path
+            return None
+        return None
+
+    def store_root(self) -> Path:
+        return Path(self.settings.download_store or self.download_dir).resolve()
+
+    def _local_size(self, local_file_name: str | None) -> int:
+        if not local_file_name:
+            return 0
+        try:
+            return Path(local_file_name).stat().st_size
+        except OSError:
+            return 0
