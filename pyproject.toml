@@ -19,6 +19,7 @@ rfc = []  # saprfclib added when the optional RFC path is implemented (PLAN.md 9
 dev = [
     "pytest>=8.3",
     "respx>=0.21",
+    "playwright>=1.40",
 ]
 
 [build-system]

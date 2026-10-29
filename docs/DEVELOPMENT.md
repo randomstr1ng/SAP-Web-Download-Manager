@@ -82,6 +82,22 @@ The tests cover the protocol parsers (both endpoint styles), the resumable
 download engine, the REST API (via a mocked portal), scheduling/autostart, the
 MCP tools, and security hardening. No SAP connectivity is required.
 
+## UI smoke test (headless browser)
+
+`scripts/ui_smoke.py` drives the real web UI in headless Chromium against a
+stub portal — no SAP account needed. It fails on any uncaught page error and
+on a broken theme toggle; screenshots land in `/tmp` (or `$UI_SMOKE_SHOT_DIR`).
+
+```bash
+.venv/bin/pip install playwright && playwright install chromium
+.venv/bin/python scripts/mock_ui_server.py --port 8010 &
+UI_SMOKE_BASE_URL=http://127.0.0.1:8010/ui/ .venv/bin/python scripts/ui_smoke.py
+```
+
+Set `CHROMIUM_PATH=/usr/bin/chromium-browser` to use a system Chromium
+instead of the Playwright-managed one. CI runs the same flow as a dedicated
+job on every push/pull request.
+
 ## Lint / formatting
 
 The project targets `ruff` (config in `pyproject.toml`):

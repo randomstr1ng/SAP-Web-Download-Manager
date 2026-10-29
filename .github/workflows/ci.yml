@@ -38,6 +38,50 @@ jobs:
           done
           echo "JS OK"
 
+  ui:
+    name: UI smoke (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and Playwright
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . playwright
+
+      - name: Install Chromium
+        run: playwright install --with-deps chromium
+
+      - name: Start app with mocked portal
+        run: |
+          python scripts/mock_ui_server.py --port 8010 > /tmp/mock_server.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8010/api/health > /dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8010/api/health
+
+      - name: Run UI smoke test
+        run: |
+          UI_SMOKE_BASE_URL=http://127.0.0.1:8010/ui/ \
+          UI_SMOKE_SHOT_DIR="$PWD/shots" python scripts/ui_smoke.py
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-smoke-screenshots
+          path: shots/
+          if-no-files-found: ignore
+
+      - name: Dump mock server log
+        if: failure()
+        run: cat /tmp/mock_server.log
+
   docker:
     name: Docker image build
     runs-on: ubuntu-latest
