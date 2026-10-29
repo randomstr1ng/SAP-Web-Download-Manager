@@ -61,6 +61,9 @@
 				<Column id="colStatus" minScreenWidth="Tablet" demandPopin="true">
 					<Text text="{i18n>status}"/>
 				</Column>
+				<Column id="colFileAction" width="3.5rem" hAlign="Center">
+					<Text text=""/>
+				</Column>
 			</columns>
 			<items>
 				<ColumnListItem type="Active" vAlign="Middle">
@@ -74,6 +77,9 @@
 								percentValue="{progress_percent}" showValue="true"
 								displayValue="{progress_text}" height="10px"/>
 						</VBox>
+						<Button icon="sap-icon://download" type="Transparent"
+							visible="{can_download}" tooltip="{i18n>ttDownloadFile}"
+							press=".onDownloadFile"/>
 					</cells>
 				</ColumnListItem>
 			</items>

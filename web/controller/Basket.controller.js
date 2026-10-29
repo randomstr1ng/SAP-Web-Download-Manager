@@ -82,6 +82,10 @@ sap.ui.define([
 				} else {
 					oItem.status_state = coreLibrary.ValueState.None;
 				}
+				// Direct download button: only when the object finished
+				// locally and at least one file is known.
+				oItem.can_download = (iLocal === 2 || iLocal === 3)
+					&& oItem.local_files && oItem.local_files.length > 0;
 				var oP = oProgress[oItem.dockey];
 				if (oP && oP.total > 0) {
 					oItem.progress_percent = Math.min(100,
@@ -311,6 +315,25 @@ sap.ui.define([
 				return MessageToast.show(this._getText("details"));
 			}
 			this._openDetail(aKeys[0]);
+		},
+
+		onDownloadFile: function (oEvent) {
+			var oItem = oEvent.getSource().getBindingContext().getObject();
+			var aFiles = oItem.local_files || [];
+			if (aFiles.length !== 1) {
+				// Several files: pick one in the detail dialog (all links)
+				this._openDetail(oItem.dockey);
+				return;
+			}
+			// Single file: trigger the browser save dialog without leaving
+			// the page.
+			var oLink = document.createElement("a");
+			oLink.href = "/api/objects/" + encodeURIComponent(oItem.dockey)
+				+ "/files/" + encodeURIComponent(aFiles[0]);
+			oLink.download = aFiles[0];
+			document.body.appendChild(oLink);
+			oLink.click();
+			oLink.remove();
 		},
 
 		_openDetail: function (sDockey) {
