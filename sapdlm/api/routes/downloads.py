@@ -104,6 +104,18 @@ async def delete_local_data(dockey: str, request: Request) -> None:
     await asyncio.to_thread(service.delete_local_data, dockey)
 
 
+@router.get("/objects/{dockey}")
+def object_detail(dockey: str, request: Request) -> dict:
+    """Full object detail: basket metadata, local files and description."""
+    try:
+        return svc(request).object_detail(dockey)
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=404,
+            detail=f"There is no item with the object id '{dockey}'.",
+        ) from exc
+
+
 @router.get("/objects/{dockey}/protocol")
 def object_protocol(dockey: str, request: Request) -> dict:
     service = svc(request)

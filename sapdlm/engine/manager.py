@@ -8,6 +8,7 @@ component downloads (resumable) -> description -> DOWNLOAD_END (BASKETSTATUS=4)
 from __future__ import annotations
 
 import threading
+import time
 from collections.abc import Callable
 from pathlib import Path
 
@@ -53,12 +54,14 @@ class DownloadManager:
         use_subdir: bool = False,
         save_description_files: bool = True,
         component_client_factory: Callable[[], httpx.Client] | None = None,
+        component_retries: int = 3,
     ):
         self.store = store
         self.client = client
         self.download_store = Path(download_store)
         self.use_subdir = use_subdir
         self.save_description_files = save_description_files
+        self.component_retries = max(0, component_retries)
         self._component_client_factory = component_client_factory
         self._stop_events: dict[str, threading.Event] = {}
         self._lock = threading.Lock()
@@ -159,22 +162,52 @@ class DownloadManager:
                 dockey, f"Downloading component {comp.resource_url}"
             )
             nr, n_total = completed + 1, total
-            try:
-                done = downloader.download(
-                    comp, dockey, self.use_subdir, stop,
-                    progress=self._wrap_progress(progress, nr, n_total),
-                )
-            except ComponentDownloadError as exc:
-                self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
-                raise DownloadAbort(f"component download failed: {exc}") from exc
-            except OSError as exc:
-                self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
-                raise DownloadAbort(
-                    "Unable to write to the target file. Check Download Store "
-                    "directory configuration and try again."
-                ) from exc
-            if not done:
-                return False  # paused
+            done = False
+            attempts = 0
+            while not done:
+                if stop.is_set():
+                    self.store.add_protocol(dockey, "The object download was paused.")
+                    return False
+                try:
+                    done = downloader.download(
+                        comp, dockey, self.use_subdir, stop,
+                        progress=self._wrap_progress(progress, nr, n_total),
+                    )
+                except ComponentDownloadError as exc:
+                    # Auth/allowlist errors are fatal; network-ish errors are
+                    # retried with exponential backoff (issue: robustness for
+                    # multi-GB archives). Resume picks up at committed bytes.
+                    if exc.status_code is not None and exc.status_code < 500:
+                        self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
+                        raise DownloadAbort(
+                            f"component download failed: {exc}"
+                        ) from exc
+                    if attempts >= self.component_retries:
+                        self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
+                        raise DownloadAbort(
+                            f"component download failed after "
+                            f"{attempts + 1} attempts: {exc}"
+                        ) from exc
+                    attempts += 1
+                    backoff = min(2 ** attempts, 60)
+                    self.store.add_protocol(
+                        dockey,
+                        f"Component download error ({exc}); retrying in "
+                        f"{backoff} s (attempt {attempts}/{self.component_retries}).",
+                    )
+                    # Re-read state: the failed attempt may have committed bytes.
+                    refreshed = self.store.components(dockey)
+                    comp = refreshed[comp.seq] if comp.seq < len(refreshed) else comp
+                    time.sleep(backoff)
+                    continue
+                except OSError as exc:
+                    self._protocol(dockey, str(exc), ENTRYTYPE_EXCEPTION)
+                    raise DownloadAbort(
+                        "Unable to write to the target file. Check Download Store "
+                        "directory configuration and try again."
+                    ) from exc
+                if not done:
+                    return False  # paused
             completed += 1
             if comp.resource_url and all(
                 c.file_status == FileStatus.COMPLETED

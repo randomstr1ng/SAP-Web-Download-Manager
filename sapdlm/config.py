@@ -40,6 +40,7 @@ class Settings:
     schedule_at: str = ""  # ISO datetime for the one-shot scheduled download
     schedule_mode: str = "all"  # "all" | "selected"
     autostart_download: bool = False  # /a, /x parity: drain basket at startup
+    component_retries: int = 3  # auto-retry attempts per component download
 
     # ------------------------------------------------------------------ helpers
 

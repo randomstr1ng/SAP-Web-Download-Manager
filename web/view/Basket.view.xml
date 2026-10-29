@@ -24,6 +24,15 @@
 			<Button text="{i18n>selectAll}" tooltip="{i18n>ttSelectAll}" icon="sap-icon://select-all" press=".onSelectAll"/>
 			<Button text="{i18n>deselectAll}" tooltip="{i18n>ttDeselectAll}" icon="sap-icon://clear-all" press=".onDeselectAll"/>
 			<ToolbarSpacer/>
+			<Label labelFor="sortSelect" text="{i18n>sortBy}"/>
+			<Select id="sortSelect" change=".onSortChange" selectedKey="sortObject">
+				<core:Item key="sortObject" text="{i18n>object}"/>
+				<core:Item key="sortSize" text="{i18n>size}"/>
+				<core:Item key="sortDate" text="{i18n>date}"/>
+				<core:Item key="sortStatus" text="{i18n>status}"/>
+			</Select>
+			<Button id="sortDir" icon="sap-icon://sort" tooltip="{i18n>ttSortDir}" press=".onSortToggle"/>
+			<Button text="{i18n>details}" tooltip="{i18n>ttDetails}" icon="sap-icon://inspection" press=".onDetails"/>
 			<Button text="{i18n>protocol}" tooltip="{i18n>ttProtocol}" icon="sap-icon://display" press=".onProtocol"/>
 			<Button text="{i18n>deleteLocal}" tooltip="{i18n>ttDeleteLocal}" icon="sap-icon://delete" press=".onDeleteLocal"/>
 			<Button text="{i18n>removeFromBasket}" tooltip="{i18n>ttRemoveFromBasket}" icon="sap-icon://remove" press=".onRemoveFromBasket"/>
@@ -34,6 +43,8 @@
 			text="{i18n>upgradeAvailable}" visible="false"
 			linkText="{i18n>upgradeInfo}" linkPressed=".onUpgradeLink"/>
 		<Text id="notRefreshedText" text="{i18n>notRefreshed}" visible="true"/>
+		<Text id="basketSummary" text="{/basket/summary}" visible="true"
+			  class="sapUiSmallMarginTop sapUiSmallMarginBeginEnd"/>
 		<Table id="basketTable" mode="MultiSelect" growing="false"
 			   items="{/basket/items}"
 			   updateFinished=".onTableUpdate">
@@ -73,6 +84,8 @@
 			<core:Icon src="{/footer/icon}"/>
 			<Text text="{/footer/connectionText}"/>
 			<ToolbarSpacer/>
+			<Text text="{/footer/progressText}"/>
+			<Text text="{/footer/speedText}"/>
 			<Text text="{/footer/downloadingText}"/>
 		</OverflowToolbar>
 	</footer>

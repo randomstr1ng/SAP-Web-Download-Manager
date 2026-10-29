@@ -1,4 +1,6 @@
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/m/MessageToast"
+], function (MessageToast) {
 	"use strict";
 
 	/**
@@ -9,6 +11,7 @@ sap.ui.define([], function () {
 		model: null,
 		_ws: null,
 		_wsToken: null,
+		_lastDownloading: null,
 
 		// ---------------------------------------------------------------- HTTP
 		call: function (sMethod, sPath, oBody) {
@@ -80,6 +83,37 @@ sap.ui.define([], function () {
 			openWs();
 		},
 
+	_formatBytes: function (nBytes) {
+		if (!nBytes || nBytes <= 0) { return "0 B"; }
+		var aUnits = ["B", "KB", "MB", "GB", "TB"];
+		var i = Math.min(aUnits.length - 1, Math.floor(Math.log(nBytes) / Math.log(1024)));
+		return (nBytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + " " + aUnits[i];
+	},
+
+		/** Aggregate transfer speed and overall progress across all active
+		 * downloads into the footer model. */
+	_updateFooterProgress: function () {
+			var oModel = this.model;
+			var oProgress = oModel.getProperty("/progress") || {};
+			var aDownloading = (oModel.getProperty("/status/downloading") || []);
+			var lBytes = 0, lTotal = 0, lSpeed = 0, iCount = 0;
+			aDownloading.forEach(function (sKey) {
+				var oItem = oProgress[sKey];
+				if (!oItem) { return; }
+				iCount++;
+				lBytes += oItem.bytes || 0;
+				lTotal += oItem.total || 0;
+				lSpeed += oItem.speed || 0;
+			});
+			oModel.setProperty("/footer/speedText",
+				iCount > 0 && lSpeed > 0 ? this._formatBytes(lSpeed) + "/s" : "");
+			oModel.setProperty("/footer/progressText",
+				iCount > 0 && lTotal > 0
+					? this._formatBytes(lBytes) + " / " + this._formatBytes(lTotal)
+					  + " (" + Math.min(100, Math.round(100 * lBytes / lTotal)) + " %)"
+					: "");
+		},
+
 		_handleEvent: function (oEvent) {
 			var oModel = this.model;
 			if (!oModel) { return; }
@@ -112,9 +146,11 @@ sap.ui.define([], function () {
 						break;
 					}
 				}
+				this._updateFooterProgress();
 			} else if (oEvent.type === "status") {
 				if (oEvent.status) { oModel.setProperty("/status", oEvent.status); }
 				if (oEvent.action) { oModel.setProperty("/action", oEvent.action); }
+				this._updateFooterProgress();
 				this.refreshBasket();
 			} else if (oEvent.type === "error") {
 				oModel.setProperty("/lastError", oEvent.message);
@@ -124,8 +160,41 @@ sap.ui.define([], function () {
 		refreshBasket: function () {
 			var that = this;
 			return this.get("/api/basket").then(function (oBasket) {
+				that._detectFinished(oBasket);
 				that.model.setProperty("/basket", oBasket);
 			}).catch(function () { /* not refreshed yet */ });
+		},
+
+		/** Compare the downloading set before/after a basket refresh and
+		 * notify about objects that finished (success or failure). */
+		_detectFinished: function (oBasket) {
+			var aItems = oBasket.items || [];
+			var aNow = aItems.filter(function (o) { return o.downloading; })
+				.map(function (o) { return o.dockey; });
+			var aPrev = this._lastDownloading || [];
+			this._lastDownloading = aNow;
+			aPrev.forEach(function (sKey) {
+				if (aNow.indexOf(sKey) !== -1) { return; }
+				var oItem = aItems.find(function (o) { return o.dockey === sKey; });
+				if (!oItem) { return; }  // removed from basket
+				var oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
+				var sText = (oItem.local_status === 3)
+					? oBundle.getText("notifCompleted", [oItem.text || sKey])
+					: oBundle.getText("notifFailed", [oItem.text || sKey]);
+				MessageToast.show(sText);
+				if (typeof Notification !== "undefined"
+						&& Notification.permission === "granted") {
+					new Notification(oBundle.getText("notifTitle"), { body: sText });
+				}
+			});
+		},
+
+		/** Ask for notification permission - call from a user gesture. */
+		requestNotifyPermission: function () {
+			if (typeof Notification !== "undefined"
+					&& Notification.permission === "default") {
+				Notification.requestPermission();
+			}
 		}
 	};
 

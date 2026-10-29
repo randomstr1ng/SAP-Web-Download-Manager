@@ -336,3 +336,23 @@ def test_settings_strips_whitespace(tmp_path, monkeypatch):
         import json as _json
         stored = _json.loads((tmp_path / "data" / "config.json").read_text())
         assert stored["username"] == "S0027638133"
+
+
+def test_object_detail_endpoint(tmp_path, monkeypatch):
+    with make_client(tmp_path, monkeypatch=monkeypatch) as client:
+        configure(client)
+        wait_task(client, client.post("/api/basket/refresh").json()["task_id"])
+        wait_task(client, client.post("/api/downloads/start",
+                                     json={"keys": ["K1"]}).json()["task_id"])
+
+        detail = client.get("/api/objects/K1").json()
+        assert detail["dockey"] == "K1"
+        assert detail["doc_type"] == "SAR"
+        assert detail["local_status"] == 3
+        assert len(detail["files"]) == 1
+        assert detail["files"][0]["file_name"] == "comp.bin"
+        assert detail["files"][0]["status"] == "completed"
+        assert detail["files"][0]["bytes_committed"] > 0
+        assert "Kernel 7.49" in detail["description"]
+
+        assert client.get("/api/objects/NOPE").status_code == 404

@@ -1,0 +1,39 @@
+<Dialog xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form"
+		title="{dlg>/text}" contentWidth="700px" resizable="true">
+	<content>
+		<VBox class="sapUiMediumMargin">
+			<form:SimpleForm editable="false" layout="ColumnLayout" columnsL="2" labelSpanL="4">
+				<core:Label text="{dlg>/labels/dockey}"/>
+				<Text text="{dlg>/dockey}"/>
+				<core:Label text="{dlg>/labels/docType}"/>
+				<Text text="{dlg>/doc_type}"/>
+				<core:Label text="{dlg>/labels/size}"/>
+				<Text text="{dlg>/size_text}"/>
+				<core:Label text="{dlg>/labels/status}"/>
+				<Text text="{dlg>/status_text}"/>
+			</form:SimpleForm>
+			<Label text="{dlg>/labels/files}" class="sapUiSmallMarginTop" visible="{dlg>/hasFiles}"/>
+			<Table items="{dlg>/files}" visible="{dlg>/hasFiles}" growing="false">
+				<columns>
+					<Column><Text text="{dlg>/labels/file}"/></Column>
+					<Column hAlign="End"><Text text="{dlg>/labels/bytes}"/></Column>
+					<Column><Text text="{dlg>/labels/fileStatus}"/></Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{dlg>file_name}"/>
+							<Text text="{dlg>bytes_text}"/>
+							<Text text="{dlg>status}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Label text="{dlg>/labels/description}" class="sapUiSmallMarginTop" visible="{dlg>/hasDescription}"/>
+			<FormattedText html="{dlg>/description_html}" visible="{dlg>/hasDescription}"/>
+		</VBox>
+	</content>
+	<beginButton>
+		<Button text="{dlg>/labels/close}" press=".onDialogClose"/>
+	</beginButton>
+</Dialog>

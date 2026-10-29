@@ -1,14 +1,22 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
 	"dlm/util/Api",
 	"sap/ui/core/library"
-], function (Controller, Filter, MessageBox, MessageToast, JSONModel, Fragment, Api, coreLibrary) {
+], function (Controller, Filter, Sorter, MessageBox, MessageToast, JSONModel, Fragment, Api, coreLibrary) {
 	"use strict";
+
+	var SORT_PATHS = {
+		sortObject: "text",
+		sortSize: "size_kb",
+		sortDate: "date_text",
+		sortStatus: "status_text"
+	};
 
 	return Controller.extend("dlm.controller.Basket", {
 
@@ -16,7 +24,7 @@ sap.ui.define([
 			this._oModel = this.getOwnerComponent ? null : sap.ui.getCore().getModel();
 			var that = this;
 			this._oTable = this.byId("basketTable");
-			this._oSorter = { key: "dockey", descending: false };
+			this._oSorter = { key: "sortObject", descending: false };
 
 			Api.refreshBasket().then(function () { that._decorate(); });
 
@@ -76,6 +84,13 @@ sap.ui.define([
 				oItem.progress_text = oItem.progress_percent + " %";
 			});
 			oModel.setProperty("/basket/items", aItems);
+			// Basket summary: "5 objects · 12.4 GB"
+			var lKb = 0;
+			aItems.forEach(function (oItem) { lKb += oItem.size_kb || 0; });
+			oModel.setProperty("/basket/summary", aItems.length
+				? this._getText("summary",
+					[aItems.length, Api._formatBytes(lKb * 1024)])
+				: "");
 			this._applyFilterSort();
 		},
 
@@ -87,11 +102,15 @@ sap.ui.define([
 				oModel.setProperty("/footer", {
 					icon: oStatus.connected ? "sap-icon://connected" : "sap-icon://disconnected",
 					connectionText: oStatus.connected
-						? that._getText("connected") : that._getText("disconnected"),
+						? that._getText("connected")
+						  + (oStatus.server ? " \u00b7 " + oStatus.server : "")
+						: that._getText("disconnected"),
+					speedText: "", progressText: "",
 					downloadingText: (oStatus.downloading || []).length
 						? that._getText("downloadingCount", [(oStatus.downloading || []).join(", ")])
 						: ""
 				});
+				Api._updateFooterProgress();
 				that.byId("notRefreshedText").setVisible(!oModel.getProperty("/basket/refreshed"));
 			}).catch(function () {});
 		},
@@ -215,6 +234,8 @@ sap.ui.define([
 
 		_startDownload: function (aKeys) {
 			var that = this;
+			// Ask for notification permission while we have a user gesture
+			Api.requestNotifyPermission();
 			Api.post("/api/downloads/start", { keys: aKeys }).then(function (oRes) {
 				// Live updates arrive via WebSocket; poll the task as fallback.
 				return Api.waitTask(oRes.task_id, function () {
@@ -252,6 +273,64 @@ sap.ui.define([
 						oDialog.open();
 					});
 				});
+		},
+
+		onItemPress: function (oEvent) {
+			var oCtx = oEvent.getParameter("listItem").getBindingContext();
+			this._openDetail(oCtx.getProperty("dockey"));
+		},
+
+		onDetails: function () {
+			var aKeys = this._selectedKeys();
+			if (!aKeys.length) {
+				return MessageToast.show(this._getText("details"));
+			}
+			this._openDetail(aKeys[0]);
+		},
+
+		_openDetail: function (sDockey) {
+			var that = this;
+			Promise.all([
+				Api.get("/api/objects/" + encodeURIComponent(sDockey)),
+				Api.get("/api/objects/" + encodeURIComponent(sDockey) + "/protocol")
+			]).then(function (aResults) {
+				var oDetail = aResults[0], oProtocol = aResults[1];
+				var oBundle = that._coreModel("i18n").getResourceBundle();
+				var sStatus = (oDetail.status_text)
+					|| (oProtocol.entries.length
+						? oProtocol.entries[oProtocol.entries.length - 1].message
+						: "");
+				oDetail.size_text = oDetail.size_kb ? (oDetail.size_kb).toLocaleString() + " KB" : "";
+				oDetail.files.forEach(function (f) {
+					f.bytes_text = f.bytes_committed ? Api._formatBytes(f.bytes_committed) : "";
+				});
+				var sDesc = oDetail.description || "";
+				oDetail.description_html = "<p>" + sDesc
+					.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+					.replace(/\n/g, "<br/>") + "</p>";
+				oDetail.hasFiles = oDetail.files.length > 0;
+				oDetail.hasDescription = !!sDesc;
+				oDetail.status_text = sStatus;
+				oDetail.labels = {
+					dockey: oBundle.getText("object"),
+					docType: oBundle.getText("detailDocType"),
+					size: oBundle.getText("size"),
+					status: oBundle.getText("status"),
+					files: oBundle.getText("detailFiles"),
+					file: oBundle.getText("detailFile"),
+					bytes: oBundle.getText("detailBytes"),
+					fileStatus: oBundle.getText("status"),
+					description: oBundle.getText("detailDescription"),
+					close: oBundle.getText("close")
+				};
+				return Fragment.load({
+					name: "dlm.fragment.Detail", controller: that
+				}).then(function (oDialog) {
+					that.getView().addDependent(oDialog);
+					oDialog.setModel(new JSONModel(oDetail), "dlg");
+					oDialog.open();
+				});
+			}).catch(function (err) { MessageBox.error(err.message); });
 		},
 
 		onDeleteLocal: function () {
@@ -348,7 +427,7 @@ sap.ui.define([
 		_applyFilterSort: function () {
 			if (!this._oTable.getBinding("items")) { return; }
 			var sFilter = this._sFilter || "";
-			var oList = sap.ui.getCore().getModel().getProperty("/basket/items") || [];
+			var oList = this._coreModel().getProperty("/basket/items") || [];
 			var aKeys = sFilter
 				? oList.filter(function (o) {
 					return (o.text || "").toLowerCase().indexOf(sFilter) !== -1 ||
@@ -363,6 +442,20 @@ sap.ui.define([
 					}), bAnd: false })
 				: [];
 			oBinding.filter(oFilter);
+			oBinding.sort(new Sorter(SORT_PATHS[this._oSorter.key] || "text",
+				this._oSorter.descending));
+		},
+
+		onSortChange: function (oEvent) {
+			this._oSorter.key = oEvent.getParameter("selectedItem").getKey();
+			this._applyFilterSort();
+		},
+
+		onSortToggle: function () {
+			this._oSorter.descending = !this._oSorter.descending;
+			this.byId("sortDir").setIcon(this._oSorter.descending
+				? "sap-icon://sort-descending" : "sap-icon://sort");
+			this._applyFilterSort();
 		},
 
 		// ------------------------------------------------------------- misc UI

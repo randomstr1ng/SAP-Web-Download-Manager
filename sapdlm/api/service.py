@@ -10,6 +10,7 @@ import asyncio
 import logging
 import threading
 import uuid
+import httpx
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -127,6 +128,7 @@ class Service:
             use_subdir=self.settings.create_subdir,
             save_description_files=self.settings.save_description,
             component_client_factory=component_client_factory,
+            component_retries=self.settings.component_retries,
         )
         self.basket: BasketContent | None = None
         # Set during app lifespan (needs a running event loop).
@@ -153,6 +155,7 @@ class Service:
         manager.download_store = Path(self.settings.download_store)
         manager.use_subdir = self.settings.create_subdir
         manager.save_description_files = self.settings.save_description
+        manager.component_retries = max(0, self.settings.component_retries)
 
     def connection_config(self) -> ConnectionConfig:
         s = self.settings
@@ -183,12 +186,17 @@ class Service:
 
     def status(self) -> dict:
         client = self.manager.client
+        try:
+            server = httpx.URL(self.settings.sap_url).host or ""
+        except Exception:
+            server = ""
         return {
             "status": "ok",
             "app_version": __version__,
             "dlm_protocol_version": DLM_VERSION,
             "configured": self.is_configured(),
             "connected": client.connected,
+            "server": server,
             "busy": client.busy,
             "download_dir": self.settings.download_store,
             "downloading": self.manager.downloading_keys,
@@ -335,6 +343,48 @@ class Service:
             {"ts": p.ts, "type": p.type, "message": p.message}
             for p in self.store.protocol(dockey)
         ]
+
+    def object_detail(self, dockey: str) -> dict:
+        """Everything known about one object: basket metadata, local files
+        and the description text (if the description file still exists)."""
+        record = self.store.get_object(dockey)
+        if record is None:
+            raise KeyError(dockey)
+
+        status_texts = {
+            0: "not started", 1: "in progress", 2: "completed", 3: "completed",
+        }
+        files = []
+        for comp in self.store.components(dockey):
+            files.append({
+                "file_name": comp.file_name,
+                "local_file": comp.local_file_name,
+                "bytes_committed": comp.bytes_committed,
+                "status": status_texts.get(comp.file_status, "unknown"),
+            })
+
+        description = ""
+        if record.desc_file:
+            desc_path = Path(record.desc_file)
+            try:
+                store_root = Path(self.settings.download_store).resolve()
+                if desc_path.resolve().is_relative_to(store_root) and desc_path.is_file():
+                    description = desc_path.read_text(encoding="utf-8", errors="replace")[:20000]
+            except OSError:
+                description = ""
+
+        return {
+            "dockey": record.dockey,
+            "text": record.text,
+            "doc_type": record.doctype,
+            "size_kb": record.size_kb,
+            "global_status": record.global_status,
+            "basket_status": record.basket_status,
+            "local_status": record.local_status,
+            "files": files,
+            "desc_file": record.desc_file,
+            "description": description,
+        }
 
     def history(self) -> list[dict]:
         return [
