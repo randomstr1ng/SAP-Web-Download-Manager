@@ -9,7 +9,7 @@ server: operate it from any browser, files land on the server.
 
 **Original:** [SAP Download Manager (official, Java)](https://support.sap.com/en/my-support/software-downloads.html?isu_page=1&anchorId=section_995042677)
 
-![Basket view](docs/screenshots/basket.png)
+![Basket view](docs/screenshots/bright_mode.png)
 
 ## Highlights
 
@@ -69,8 +69,8 @@ docker compose run --rm sapdlm python -m sapdlm.main --auto
 
 | | |
 |---|---|
-| ![First-run wizard](docs/screenshots/wizard.png) | ![Settings](docs/screenshots/settings.png) |
-| ![Dark mode](docs/screenshots/dark.png) | |
+| ![First-run wizard](docs/screenshots/wizard.png) | ![Settings](docs/screenshots/settings_bright_mode.png) |
+| ![Dark mode](docs/screenshots/dark_mode.png) | |
 
 ## License
 
