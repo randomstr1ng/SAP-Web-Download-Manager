@@ -119,6 +119,7 @@ sap.ui.define([
 						  + (oStatus.server ? " \u00b7 " + oStatus.server : "")
 						: that._getText("disconnected"),
 					speedText: "", progressText: "",
+				watchText: oStatus.watching ? that._getText("watchingActive") : "",
 					downloadingText: (oStatus.downloading || []).length
 						? that._getText("downloadingCount", [(oStatus.downloading || []).join(", ")])
 						: ""

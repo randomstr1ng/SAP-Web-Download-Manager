@@ -53,6 +53,10 @@
 					<Switch state="{/settings/autostart_download}"/>
 					<Label text="{i18n>trace}"/>
 					<Switch state="{/settings/trace}"/>
+					<Label text="{i18n>watchMode}"/>
+					<Switch state="{/settings/watch_mode}"/>
+					<Label text="{i18n>watchInterval}"/>
+					<Input value="{/settings/watch_interval}" type="Number" enabled="{/settings/watch_mode}"/>
 					<Label text="{i18n>maxConcurrentObjects}"/>
 					<Input value="{/settings/max_concurrent_objects}" type="Number"/>
 					<Label text="{i18n>webhookUrl}"/>

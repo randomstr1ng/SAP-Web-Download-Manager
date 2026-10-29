@@ -60,6 +60,8 @@ sap.ui.define([
 					remember_credentials: oS.remember_credentials,
 					autostart_download: oS.autostart_download,
 					trace: oS.trace,
+					watch_mode: oS.watch_mode,
+					watch_interval: parseInt(oS.watch_interval, 10) || 15,
 					max_concurrent_objects: parseInt(oS.max_concurrent_objects, 10) || 1,
 					webhook_url: String(oS.webhook_url || "").trim()
 				},

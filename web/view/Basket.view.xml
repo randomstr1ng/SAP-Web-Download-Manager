@@ -83,6 +83,7 @@
 		<OverflowToolbar>
 			<core:Icon src="{/footer/icon}"/>
 			<Text text="{/footer/connectionText}"/>
+			<Text text="{/footer/watchText}"/>
 			<ToolbarSpacer/>
 			<Text text="{/footer/progressText}"/>
 			<Text text="{/footer/speedText}"/>

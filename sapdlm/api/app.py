@@ -63,6 +63,11 @@ async def lifespan(app: FastAPI):
 
     service.scheduler = Scheduler(service)
     await service.scheduler.load()
+    # Watch mode: periodic refresh + auto-download of new items.
+    from sapdlm.api.watcher import Watcher
+
+    service.watcher = Watcher(service)
+    await service.watcher.load()
     if service.settings.autostart_download and service.is_configured():
         # /a, /x parity: drain the basket automatically at startup.
         async def _autostart() -> None:
@@ -82,6 +87,8 @@ async def lifespan(app: FastAPI):
     yield
     if getattr(service, "scheduler", None):
         service.scheduler.cancel()
+    if getattr(service, "watcher", None):
+        service.watcher.stop()
     service.store.close()
 
 

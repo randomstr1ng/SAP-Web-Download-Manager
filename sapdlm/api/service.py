@@ -139,6 +139,7 @@ class Service:
         self.basket: BasketContent | None = None
         # Set during app lifespan (needs a running event loop).
         self.scheduler = None
+        self.watcher = None
         self._refresh_stop = None
         self._apply_log_level()
 
@@ -207,6 +208,8 @@ class Service:
             "busy": client.busy,
             "download_dir": self.settings.download_store,
             "downloading": self.manager.downloading_keys,
+            "watching": bool(self.watcher is not None
+                             and self.watcher.status()["active"]),
         }
 
     # ------------------------------------------------------------------- basket
@@ -413,9 +416,12 @@ class Service:
         self.settings = Settings.from_dict(current)
         self.settings.max_concurrent_objects = max(
             1, self.settings.max_concurrent_objects)
+        self.settings.watch_interval = max(1, self.settings.watch_interval)
         save_settings(self.data_dir, self.settings)
         self.reload_engine()
         self._apply_log_level()
+        if self.watcher is not None:
+            self.watcher.apply()
         return self.settings
 
     def settings_view(self) -> dict:

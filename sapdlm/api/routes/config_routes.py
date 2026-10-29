@@ -31,6 +31,8 @@ class SettingsPayload(BaseModel):
     trace: bool | None = None
     webhook_url: str | None = None
     max_concurrent_objects: int | None = None
+    watch_mode: bool | None = None
+    watch_interval: int | None = None
     schedule_at: str | None = None
     schedule_mode: str | None = None
     autostart_download: bool | None = None

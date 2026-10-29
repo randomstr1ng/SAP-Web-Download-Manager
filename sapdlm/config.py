@@ -39,6 +39,8 @@ class Settings:
     trace: bool = False
     schedule_at: str = ""  # ISO datetime for the one-shot scheduled download
     schedule_mode: str = "all"  # "all" | "selected"
+    watch_mode: bool = False  # periodically refresh + auto-download new items
+    watch_interval: int = 15  # minutes between watch cycles
     autostart_download: bool = False  # /a, /x parity: drain basket at startup
     component_retries: int = 3  # auto-retry attempts per component download
     max_concurrent_objects: int = 1  # objects downloaded in parallel (1 = parity)
