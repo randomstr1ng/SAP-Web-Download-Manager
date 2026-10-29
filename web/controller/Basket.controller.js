@@ -261,9 +261,20 @@ sap.ui.define([
 		},
 
 		onPause: function () {
-			var aKeys = this._selectedKeys().length ? this._selectedKeys()
-				: (sap.ui.getCore().getModel().getProperty("/status/downloading") || []);
 			var that = this;
+			var oStatus = this._coreModel().getProperty("/status") || {};
+			// Nothing downloading but busy => a basket refresh is running:
+			// cancel it (original jbtnPause interrupts the basket fetch).
+			if (!(oStatus.downloading || []).length && oStatus.busy) {
+				Api.post("/api/basket/refresh/cancel").then(function (oRes) {
+					if (oRes && oRes.cancelled) {
+						MessageToast.show(that._getText("refreshCanceled"));
+					}
+				});
+				return;
+			}
+			var aKeys = this._selectedKeys().length ? this._selectedKeys()
+				: (oStatus.downloading || []);
 			Promise.all(aKeys.map(function (k) {
 				return Api.post("/api/downloads/" + encodeURIComponent(k) + "/pause");
 			})).then(function () {

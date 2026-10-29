@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 
@@ -34,17 +35,32 @@ async def refresh_basket(request: Request, background: BackgroundTasks) -> dict:
     service = svc(request)
     _require_configured(service)
     task_id = service.tasks.create("refresh")
+    stop = threading.Event()
+    service.events.publish({"type": "status", "action": "Refreshing basket..."})
 
     async def run() -> None:
+        from sapdlm.client.connection import RefreshCancelled
+
         try:
-            await asyncio.to_thread(service.refresh_basket)
+            await asyncio.to_thread(service.refresh_basket, stop)
             service.tasks.finish(task_id)
+        except RefreshCancelled:
+            service.tasks.finish(task_id, state="cancelled")
+            service.events.publish({"type": "status", **service.status(),
+                                   "action": "Refresh canceled"})
         except Exception as exc:  # noqa: BLE001 - reported to the client
             service.tasks.finish(task_id, str(exc))
             service.events.publish({"type": "error", "message": str(exc)})
 
     background.add_task(run)
-    return {"task_id": task_id, "state": "running"}
+    return {"task_id": task_id, "state": "running", "cancelable": True}
+
+
+@router.post("/basket/refresh/cancel", status_code=202)
+async def cancel_refresh(request: Request) -> dict:
+    """Cancel a running basket refresh (original: interruptGetBasketContent)."""
+    stopped = svc(request).cancel_refresh()
+    return {"cancelled": stopped}
 
 
 @router.delete("/basket/{dockey}", status_code=204)

@@ -10,6 +10,7 @@ from enum import Enum
 
 from sapdlm.client.basket import BasketContent, DownloadEnd, DownloadStart, ObjectVersion
 from sapdlm.client.connection import (
+    RefreshCancelled,
     AuthenticationConfigError,
     ConnectionConfig,
     SapConnection,
@@ -60,7 +61,7 @@ class DownloadClient:
         if self.busy:
             raise DownloadClientBusyError("The download client is already busy.")
 
-    def check_basket_content(self) -> BasketContent:
+    def check_basket_content(self, stop=None) -> BasketContent:
         """Fetch and parse the basket (synchronousCheckBasketContent parity).
 
         Retries up to 5 times except on HTTP 401/403 (GetBasketContentThread).
@@ -71,10 +72,13 @@ class DownloadClient:
         try:
             self.config.validate_auth()
             connection = self._connection()
-            response = connection.get_with_retries(connection.endpoints.basket_content())
+            response = connection.get_with_retries(
+                connection.endpoints.basket_content(), stop=stop)
             self.connected = True
             self.basket = parse_basket_content(response.text, connection.style)
             return self.basket
+        except RefreshCancelled:
+            raise
         except Exception as exc:
             self.connected = False
             self.last_error = exc

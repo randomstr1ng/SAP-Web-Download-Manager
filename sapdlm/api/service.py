@@ -89,10 +89,13 @@ class TaskRegistry:
             }
         return task_id
 
-    def finish(self, task_id: str, error: str | None = None) -> None:
+    def finish(self, task_id: str, error: str | None = None,
+               state: str | None = None) -> None:
         with self._lock:
             if task_id in self._tasks:
-                self._tasks[task_id]["state"] = "error" if error else "done"
+                if state is None:
+                    state = "error" if error else "done"
+                self._tasks[task_id]["state"] = state
                 self._tasks[task_id]["error"] = error
 
     def get(self, task_id: str) -> dict | None:
@@ -133,6 +136,7 @@ class Service:
         self.basket: BasketContent | None = None
         # Set during app lifespan (needs a running event loop).
         self.scheduler = None
+        self._refresh_stop = None
         self._apply_log_level()
 
     def _apply_log_level(self) -> None:
@@ -204,10 +208,15 @@ class Service:
 
     # ------------------------------------------------------------------- basket
 
-    def refresh_basket(self) -> dict:
-        """Synchronous basket fetch (run in a worker thread)."""
-        self.manager.client.config = self.connection_config()
-        content = self.manager.client.check_basket_content()
+    def refresh_basket(self, stop=None) -> dict:
+        """Synchronous basket fetch (run in a worker thread). `stop` is a
+        threading.Event that cancels the fetch (between retries)."""
+        self._refresh_stop = stop
+        try:
+            self.manager.client.config = self.connection_config()
+            content = self.manager.client.check_basket_content(stop=stop)
+        finally:
+            self._refresh_stop = None
         self.basket = content
         for item in content.items.values():
             record = self.store.get_object(item.dockey) or ObjectRecord(
@@ -221,6 +230,13 @@ class Service:
             self.store.upsert_object(record)
         self.events.publish({"type": "status", **self.status()})
         return self.basket_view()
+
+    def cancel_refresh(self) -> bool:
+        """Cancel a running basket refresh (if any)."""
+        if self._refresh_stop is not None and not self._refresh_stop.is_set():
+            self._refresh_stop.set()
+            return True
+        return False
 
     def basket_view(self) -> dict:
         """Current basket merged with local status."""

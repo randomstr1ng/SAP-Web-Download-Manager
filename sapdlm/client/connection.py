@@ -96,6 +96,11 @@ class SapResponse:
             return 0
 
 
+class RefreshCancelled(Exception):
+    """A basket refresh was canceled by the user (DownloadClient
+    .interruptGetBasketContent parity)."""
+
+
 class SapConnection:
     """Stateless HTTP executor for portal requests (SAPConnection.getResponse parity)."""
 
@@ -169,11 +174,15 @@ class SapConnection:
             )
         raise SapIOError(f"Request failed. Exception: {last_error}; Class: {type(last_error)}")
 
-    def get_with_retries(self, path: str, attempts: int = 5) -> SapResponse:
-        """Basket-content fetch: retry up to N times, abort immediately on 401/403
-        (DownloadClient.GetBasketContentThread parity)."""
+    def get_with_retries(self, path: str, attempts: int = 5,
+                          stop=None) -> SapResponse:
+        """Basket-content fetch: retry up to N times, abort immediately on
+        401/403 (DownloadClient.GetBasketContentThread parity). `stop` is a
+        threading.Event checked between attempts - canceling a refresh."""
         last_exc: Exception | None = None
         for _ in range(attempts):
+            if stop is not None and stop.is_set():
+                raise RefreshCancelled()
             try:
                 return self.get(path)
             except SapIOError as exc:

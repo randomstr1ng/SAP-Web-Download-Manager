@@ -372,3 +372,81 @@ def test_basket_items_include_local_files(tmp_path, monkeypatch):
                                      json={"keys": ["K1"]}).json()["task_id"])
         basket = client.get("/api/basket").json()
         assert basket["items"][0]["local_files"] == ["comp.bin"]
+
+
+        assert client.post("/api/basket/refresh/cancel").json()["cancelled"] is False
+
+
+def _mk_from_factory(factory):
+    from sapdlm.api.app import create_app
+    from fastapi.testclient import TestClient
+    return TestClient(create_app(service_factory=factory))
+
+
+def test_refresh_cancelable(tmp_path, monkeypatch):
+    """Canceling a running basket refresh aborts between retries (original:
+    interruptGetBasketContent) and the endpoint is a no-op when idle.
+
+    The engine part runs thread-based (TestClient executes background tasks
+    synchronously, so a mid-flight cancel through the API cannot be timed
+    deterministically there)."""
+    import threading
+    import time as _t
+
+    import httpx
+    from sapdlm.client.connection import RefreshCancelled
+    from sapdlm.config import Settings, save_settings
+    from sapdlm.credentials import CredentialStore
+    from tests.test_api import portal_handler as _ph
+
+    calls = {"n": 0}
+
+    def flaky_refresh(request: httpx.Request) -> httpx.Response:
+        if httpx.QueryParams(request.url.query).get("_MODE") == "BASKET_CONTENT":
+            calls["n"] += 1
+            return httpx.Response(503)  # always -> retry/backoff loop
+        return _ph(request)
+
+    transport = httpx.MockTransport(flaky_refresh)
+    data_dir = tmp_path / "data"
+    data_dir.mkdir(parents=True)
+    save_settings(data_dir, Settings(
+        sap_url="https://launchpad.test", username="jane",
+        download_store=str(tmp_path / "store")))
+    CredentialStore(data_dir).set("sap_password", "s3cret")
+
+    service = Service(data_dir=data_dir, download_dir=tmp_path / "store",
+                      http_client=httpx.Client(transport=transport),
+                      component_client_factory=lambda: httpx.Client(
+                          transport=transport))
+
+    stop = threading.Event()
+    result = {}
+
+    def run():
+        try:
+            service.refresh_basket(stop)
+            result["state"] = "done"
+        except RefreshCancelled:
+            result["state"] = "cancelled"
+
+    thread = threading.Thread(target=run)
+    thread.start()
+    # wait until the refresh is inside the retry loop
+    deadline = _t.time() + 5
+    while _t.time() < deadline and calls["n"] < 1:
+        _t.sleep(0.05)
+    assert service.cancel_refresh() is True
+    thread.join(timeout=10)
+    assert result["state"] == "cancelled"
+    # canceling with nothing running is a no-op
+    assert service.cancel_refresh() is False
+    # basket untouched by the canceled refresh
+    assert service.basket is None
+
+
+def test_refresh_cancel_endpoint_idle_noop(tmp_path, monkeypatch):
+    with make_client(tmp_path, monkeypatch=monkeypatch) as client:
+        resp = client.post("/api/basket/refresh/cancel")
+        assert resp.status_code == 202
+        assert resp.json()["cancelled"] is False
