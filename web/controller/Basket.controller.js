@@ -26,6 +26,13 @@ sap.ui.define([
 			this._oTable = this.byId("basketTable");
 			this._oSorter = { key: "sortObject", descending: false };
 
+			// Theme toggle: the icon shows the mode you switch TO
+			// (moon = "switch to dark", sun = "switch to light").
+			var sInitial = sap.ui.getCore().getConfiguration().getTheme();
+			this.byId("btnTheme").setIcon(
+				sInitial === "sap_horizon_dark"
+					? "sap-icon://light-mode" : "sap-icon://dark-mode");
+
 			Api.refreshBasket().then(function () { that._decorate(); });
 
 			// Periodic status poll (WS covers live updates; poll is the fallback).
@@ -464,13 +471,16 @@ sap.ui.define([
 			oApp.to(oApp.getPages()[1]);
 		},
 
-		onToggleTheme: function () {
-			var oModel = sap.ui.getCore().getModel();
-			var sCurrent = oModel.getProperty("/theme") || "sap_horizon";
-			var sNext = sCurrent === "sap_horizon" ? "sap_horizon_dark" : "sap_horizon";
+		onThemeToggle: function () {
+			var sCurrent = sap.ui.getCore().getConfiguration().getTheme();
+			var sNext = sCurrent === "sap_horizon_dark" ? "sap_horizon" : "sap_horizon_dark";
 			sap.ui.getCore().applyTheme(sNext);
-			oModel.setProperty("/theme", sNext);
+			sap.ui.getCore().getModel().setProperty("/theme", sNext);
 			window.localStorage.setItem("dlm.theme", sNext);
+			// icon shows the mode you would switch to next
+			this.byId("btnTheme").setIcon(
+				sNext === "sap_horizon_dark"
+					? "sap-icon://light-mode" : "sap-icon://dark-mode");
 		},
 
 		_setBusy: function (bBusy, sText) {

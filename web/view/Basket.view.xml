@@ -16,7 +16,7 @@
 			<Button id="btnSchedule" text="{i18n>schedule}" tooltip="{i18n>ttSchedule}" icon="sap-icon://clock" press=".onSchedule"/>
 			<Button id="btnHistory" text="{i18n>history}" tooltip="{i18n>ttHistory}" icon="sap-icon://history" press=".onHistory"/>
 			<Button id="btnSettings" text="{i18n>settings}" tooltip="{i18n>ttSettings}" icon="sap-icon://action-settings" press=".onSettings"/>
-			<Button id="btnTheme" text="{i18n>theme}" tooltip="{i18n>ttTheme}" icon="sap-icon://brightness" press=".onToggleTheme"/>
+			<Button id="btnTheme" icon="sap-icon://dark-mode" tooltip="{i18n>ttTheme}" press=".onThemeToggle"/>
 		</OverflowToolbar>
 	</customHeader>
 	<subHeader>
