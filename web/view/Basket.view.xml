@@ -40,8 +40,11 @@
 	</subHeader>
 	<content>
 		<MessageStrip id="upgradeBanner" type="Warning" showIcon="true"
-			text="{i18n>upgradeAvailable}" visible="false"
-			linkText="{i18n>upgradeInfo}" linkPressed=".onUpgradeLink"/>
+			text="{i18n>upgradeAvailable}" visible="false">
+			<link>
+				<Link text="{i18n>upgradeInfo}" press=".onUpgradeLink"/>
+			</link>
+		</MessageStrip>
 		<Text id="notRefreshedText" text="{i18n>notRefreshed}" visible="true"/>
 		<Text id="basketSummary" text="{/basket/summary}" visible="true"
 			  class="sapUiSmallMarginTop sapUiSmallMarginBeginEnd"/>
